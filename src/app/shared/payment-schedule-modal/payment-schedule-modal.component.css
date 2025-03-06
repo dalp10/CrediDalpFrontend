@@ -83,3 +83,40 @@ button[color="primary"] {
 button[color="primary"]:hover {
   background-color: #303f9f; /* Color primario más oscuro al hacer hover */
 }
+
+/* Estilos para la impresión */
+@media print {
+  /* Ocultar elementos no deseados en la impresión */
+  mat-dialog-actions {
+    display: none; /* Oculta los botones al imprimir */
+  }
+
+  /* Asegurar que el contenido del modal se imprima correctamente */
+  mat-dialog-content {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Estilos adicionales para la tabla al imprimir */
+  table {
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    page-break-inside: auto; /* Permite que la tabla se divida en varias páginas */
+  }
+
+  tr {
+    page-break-inside: avoid; /* Evita que las filas se dividan entre páginas */
+    page-break-after: auto;
+  }
+
+  th.mat-header-cell {
+    background-color: #3f51b5 !important;
+    color: white !important;
+  }
+
+  /* Asegurar que el contenido se divida en varias páginas */
+  .credit-details, table {
+    page-break-after: always; /* Fuerza un salto de página después de los detalles y la tabla */
+  }
+}
