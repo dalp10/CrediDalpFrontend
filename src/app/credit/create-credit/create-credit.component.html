@@ -1,135 +1,109 @@
 <div class="form-container">
   <mat-card class="form-card">
+    <!-- Título del formulario -->
     <mat-card-header>
       <mat-card-title>Crear Nuevo Crédito</mat-card-title>
-      <mat-card-subtitle>Complete el formulario para crear un nuevo crédito</mat-card-subtitle>
+      <mat-card-subtitle>Complete los campos para crear un nuevo crédito</mat-card-subtitle>
     </mat-card-header>
 
-    <mat-card-content>
-      <form [formGroup]="creditForm" (ngSubmit)="onSubmit()" class="form-grid">
-        <!-- Columna 1 -->
-        <div class="form-column">
-          <!-- Monto del Capital -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Monto del Capital</mat-label>
-            <input matInput formControlName="capitalAmount" type="number" />
-            <mat-icon matSuffix>attach_money</mat-icon>
-            <mat-error *ngIf="creditForm.get('capitalAmount')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('capitalAmount')?.hasError('min')">
-              El monto debe ser mayor o igual a 0.
-            </mat-error>
-          </mat-form-field>
+    <form [formGroup]="creditForm" (ngSubmit)="onSubmit()" class="form-grid">
+      <!-- Primera columna: Montos, fechas y cliente -->
+      <div class="form-column">
+        <!-- Monto del Capital -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Monto del Capital</mat-label>
+          <input matInput formControlName="capitalAmount" type="number" />
+          <mat-icon matSuffix>attach_money</mat-icon>
+          <mat-error *ngIf="creditForm.get('capitalAmount')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
 
-          <!-- Tasa de Interés -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Tasa de Interés (%)</mat-label>
-            <input matInput formControlName="interestRate" type="number" />
-            <mat-icon matSuffix>percent</mat-icon>
-            <mat-error *ngIf="creditForm.get('interestRate')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('interestRate')?.hasError('min')">
-              La tasa debe ser mayor o igual a 0.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('interestRate')?.hasError('max')">
-              La tasa no puede ser mayor a 100.
-            </mat-error>
-          </mat-form-field>
+        <!-- TEA (Tasa Efectiva Anual) -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>TEA (Tasa Efectiva Anual)</mat-label>
+          <input matInput formControlName="tea" type="number" />
+          <mat-icon matSuffix>trending_up</mat-icon>
+          <mat-error *ngIf="creditForm.get('tea')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
 
-          <!-- Fecha de Inicio -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Fecha de Inicio</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" />
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-            <mat-error *ngIf="creditForm.get('startDate')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-          </mat-form-field>
+        <!-- Fecha de Inicio -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha de Inicio</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" />
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+          <mat-error *ngIf="creditForm.get('startDate')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
 
-          <!-- Fecha de Fin -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Fecha de Fin</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" />
-            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-            <mat-error *ngIf="creditForm.get('endDate')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Fecha de Fin -->
+        <!-- <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha de Fin</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" />
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+          <mat-error *ngIf="creditForm.get('endDate')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field> -->
+      </div>
 
-        <!-- Columna 2 -->
-        <div class="form-column">
-          <!-- Período de Gracia -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Período de Gracia (días)</mat-label>
-            <input matInput formControlName="gracePeriodDays" type="number" />
-            <mat-icon matSuffix>calendar_today</mat-icon>
-            <mat-error *ngIf="creditForm.get('gracePeriodDays')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('gracePeriodDays')?.hasError('min')">
-              El período debe ser mayor o igual a 0.
-            </mat-error>
-          </mat-form-field>
+      <!-- Segunda columna: Fechas, cuotas y días de gracia -->
+      <div class="form-column">
+        <!-- Fecha del Primer Pago -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha del Primer Pago</mat-label>
+          <input matInput [matDatepicker]="firstPaymentDatePicker" formControlName="firstPaymentDate" />
+          <mat-datepicker-toggle matSuffix [for]="firstPaymentDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #firstPaymentDatePicker></mat-datepicker>
+          <mat-error *ngIf="creditForm.get('firstPaymentDate')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
 
-          <!-- ID del Cliente -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>ID del Cliente</mat-label>
-            <input matInput formControlName="clientId" type="number" />
-            <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="creditForm.get('clientId')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-          </mat-form-field>
-
-          <!-- Número de Cuotas -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Número de Cuotas</mat-label>
-            <input matInput formControlName="numberOfInstallments" type="number" />
-            <mat-icon matSuffix>list_alt</mat-icon>
-            <mat-error *ngIf="creditForm.get('numberOfInstallments')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('numberOfInstallments')?.hasError('min')">
-              El número de cuotas debe ser mayor o igual a 1.
-            </mat-error>
-          </mat-form-field>
-
-          <!-- TEA (Tasa Efectiva Anual) -->
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>TEA (Tasa Efectiva Anual)</mat-label>
-            <input matInput formControlName="tea" type="number" />
-            <mat-icon matSuffix>trending_up</mat-icon>
-            <mat-error *ngIf="creditForm.get('tea')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('tea')?.hasError('min')">
-              La TEA debe ser mayor o igual a 0.
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>ID del Cliente</mat-label>
-            <input matInput formControlName="clientId" type="number" readonly />
-            <button mat-icon-button (click)="openClientSearchModal()" matSuffix>
-              <mat-icon>search</mat-icon>
-            </button>
-            <mat-error *ngIf="creditForm.get('clientId')?.hasError('required')">
-              Este campo es requerido.
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Botón de Envío (Ocupa ambas columnas) -->
-        <div class="full-width">
-          <button mat-raised-button color="primary" type="submit" [disabled]="creditForm.invalid" class="submit-button">
-            <mat-icon>save</mat-icon> Crear Crédito
+        <!-- ID del Cliente -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>ID del Cliente</mat-label>
+          <input matInput formControlName="clientId" type="number" readonly />
+          <button mat-icon-button (click)="openClientSearchModal()" matSuffix>
+            <mat-icon>search</mat-icon>
           </button>
-        </div>
-      </form>
-    </mat-card-content>
+          <mat-error *ngIf="creditForm.get('clientId')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Número de Cuotas -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Número de Cuotas</mat-label>
+          <input matInput formControlName="numberOfInstallments" type="number" />
+          <mat-icon matSuffix>list_alt</mat-icon>
+          <mat-error *ngIf="creditForm.get('numberOfInstallments')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Período de Gracia -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Período de Gracia (días)</mat-label>
+          <input matInput formControlName="gracePeriodDays" type="number" readonly />
+          <mat-icon matSuffix>calendar_today</mat-icon>
+          <mat-error *ngIf="creditForm.get('gracePeriodDays')?.hasError('required')">
+            Este campo es requerido.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Botón de Envío -->
+      <div class="full-width">
+        <button mat-raised-button color="primary" type="submit" [disabled]="creditForm.invalid || isSubmitting" class="submit-button">
+          <mat-icon>save</mat-icon> {{ isSubmitting ? 'Procesando...' : 'Crear Crédito' }}
+        </button>
+      </div>
+    </form>
   </mat-card>
 </div>

@@ -1,0 +1,82 @@
+<h2 mat-dialog-title>Calendario de Pagos del Crédito</h2>
+<mat-dialog-content>
+  <!-- Sección de detalles del crédito -->
+  <div class="credit-details">
+    <div class="detail-item">
+      <span class="detail-label">Importe solicitado:</span>
+      <span class="detail-value">{{ creditDetails.amount }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Cuota:</span>
+      <span class="detail-value">{{ creditDetails.installmentAmount }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Duración total:</span>
+      <span class="detail-value">{{ creditDetails.duration }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Fecha de solicitud:</span>
+      <span class="detail-value">{{ creditDetails.requestDate }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Fecha de vencimiento:</span>
+      <span class="detail-value">{{ creditDetails.dueDate }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Día de pago:</span>
+      <span class="detail-value">{{ creditDetails.paymentDay }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Tasa Efectiva Anual:</span>
+      <span class="detail-value">{{ creditDetails.tea }}</span>
+    </div>
+  </div>
+
+  <!-- Tabla de cuotas -->
+  <table mat-table [dataSource]="installments" class="mat-elevation-z8">
+    <!-- Número de Cuota Column -->
+    <ng-container matColumnDef="installmentNumber">
+      <th mat-header-cell *matHeaderCellDef>N° Cuota</th>
+      <td mat-cell *matCellDef="let installment; let i = index">{{ i + 1 }}</td>
+    </ng-container>
+
+    <!-- Fecha de Vencimiento Column -->
+    <ng-container matColumnDef="dueDate">
+      <th mat-header-cell *matHeaderCellDef>Fecha de Vencimiento</th>
+      <td mat-cell *matCellDef="let installment">{{ installment.dueDate | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <!-- Monto Column -->
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef>Monto</th>
+      <td mat-cell *matCellDef="let installment">{{ installment.amount | currency: 'USD':'symbol':'1.2-2' }}</td>
+    </ng-container>
+
+    <!-- Capital Column -->
+    <ng-container matColumnDef="capitalAmount">
+      <th mat-header-cell *matHeaderCellDef>Capital</th>
+      <td mat-cell *matCellDef="let installment">{{ installment.capitalAmount | currency: 'USD':'symbol':'1.2-2' }}</td>
+    </ng-container>
+
+    <!-- Interés Column -->
+    <ng-container matColumnDef="interestAmount">
+      <th mat-header-cell *matHeaderCellDef>Interés</th>
+      <td mat-cell *matCellDef="let installment">{{ installment.interestAmount | currency: 'USD':'symbol':'1.2-2' }}</td>
+    </ng-container>
+
+    <!-- Estado Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let installment">{{ installment.status }}</td>
+    </ng-container>
+
+    <!-- Cabecera de la tabla -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <!-- Filas de la tabla -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-button color="primary" (click)="onConfirm()">Confirmar</button>
+</mat-dialog-actions>
