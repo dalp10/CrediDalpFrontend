@@ -1,0 +1,129 @@
+<div class="container mt-5">
+  <h2 class="text-center mb-4">
+    <i class="fas fa-user-plus me-2"></i> <!-- Icono de creación de usuario -->
+    Create User
+  </h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <!-- Username Field -->
+    <div class="form-group mb-3">
+      <label for="username" class="form-label">
+        <i class="fas fa-user me-2"></i> <!-- Icono de usuario -->
+        Username
+      </label>
+      <input
+        type="text"
+        id="username"
+        formControlName="username"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': username?.touched && username?.invalid || userExists }"
+        placeholder="Ingrese 4 letras en mayúscula"
+        (input)="convertToUppercase($event)"
+      />
+      <div *ngIf="username?.touched && username?.invalid" class="invalid-feedback">
+        <div *ngIf="username?.errors?.['required']">Username es requerido.</div>
+        <div *ngIf="username?.errors?.['invalidUsername']">
+          El username debe tener exactamente 4 letras en mayúscula.
+        </div>
+      </div>
+      <div *ngIf="userExists" class="text-danger mt-2">
+        Este nombre de usuario ya está en uso. Por favor, elija otro.
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group mb-3">
+      <label for="password" class="form-label">
+        <i class="fas fa-key me-2"></i> <!-- Icono de contraseña -->
+        Password
+      </label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': password?.touched && password?.invalid }"
+        placeholder="Ingrese su contraseña"
+      />
+      <div *ngIf="password?.touched && password?.invalid" class="invalid-feedback">
+        <div *ngIf="password?.errors?.['required']">Password es requerido.</div>
+        <div *ngIf="password?.errors?.['minlength']">Password debe tener al menos 6 caracteres.</div>
+      </div>
+    </div>
+
+    <!-- Role Field -->
+    <div class="form-group mb-3">
+      <label for="role" class="form-label">
+        <i class="fas fa-user-tag me-2"></i> <!-- Icono de rol -->
+        Role
+      </label>
+      <select
+        id="role"
+        formControlName="role"
+        class="form-select"
+        [ngClass]="{ 'is-invalid': role?.touched && role?.invalid }"
+      >
+        <option value="">Seleccione un rol</option>
+        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+      </select>
+      <div *ngIf="role?.touched && role?.invalid" class="invalid-feedback">
+        Rol es requerido.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="btn btn-primary w-100"
+      [disabled]="isLoading || userExists || userForm.invalid"
+    >
+      <i class="fas fa-save me-2"></i> <!-- Icono de guardar -->
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Crear Usuario
+    </button>
+  </form>
+</div>
+
+<!-- Modal de Confirmación -->
+<ng-template #confirmModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-check-circle me-2"></i> <!-- Icono de confirmación -->
+      Confirmar Creación
+    </h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss('cancel')"></button>
+  </div>
+  <div class="modal-body">
+    ¿Estás seguro de que deseas crear este usuario?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">
+      <i class="fas fa-times me-2"></i> <!-- Icono de cancelar -->
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('confirm')">
+      <i class="fas fa-check me-2"></i> <!-- Icono de confirmar -->
+      Confirmar
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modal de Respuesta -->
+<ng-template #responseModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i *ngIf="isSuccess" class="fas fa-check-circle me-2"></i> <!-- Icono de éxito -->
+      <i *ngIf="!isSuccess" class="fas fa-exclamation-circle me-2"></i> <!-- Icono de error -->
+      {{ isSuccess ? 'Éxito' : 'Error' }}
+    </h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss('close')"></button>
+  </div>
+  <div class="modal-body">
+    <p [ngClass]="{'text-success': isSuccess, 'text-danger': !isSuccess}">{{ backendMessage }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="modal.close('close')">
+      <i class="fas fa-check me-2"></i> <!-- Icono de aceptar -->
+      Aceptar
+    </button>
+  </div>
+</ng-template>

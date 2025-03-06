@@ -1,0 +1,57 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 800px; /* Aumentamos el ancho máximo */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+  gap: 20px; /* Espacio entre columnas */
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espacio entre campos */
+}
+
+.form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: span 2; /* El botón ocupa ambas columnas */
+}
+
+.submit-button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+mat-card-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+mat-card-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+mat-card-subtitle {
+  font-size: 16px;
+  color: #666;
+}

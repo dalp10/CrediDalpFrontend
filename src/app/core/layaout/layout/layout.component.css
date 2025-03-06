@@ -1,0 +1,5 @@
+/* layout.component.css */
+.content {
+    margin-left: 260px; /* Ajusta el margen para que no se solape con el sidebar */
+    padding: 20px;
+}

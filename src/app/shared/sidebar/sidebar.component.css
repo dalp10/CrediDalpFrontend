@@ -1,0 +1,192 @@
+/* Estilos generales del sidebar */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: #2c3e50;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  position: fixed; /* Fija el sidebar */
+  z-index: 1000;
+}
+/* Encabezado del Sidebar */
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1abc9c;
+  transition: color 0.3s ease;
+}
+
+.sidebar-header p {
+  font-size: 14px;
+  color: #bdc3c7;
+}
+
+/* Botón de toggle */
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-btn:hover {
+  transform: rotate(180deg);
+}
+
+/* Menú del Sidebar */
+.menu {
+  list-style: none; /* Elimina las bolitas de la lista principal */
+  padding: 0;
+  flex-grow: 1;
+}
+
+.menu-item {
+  margin: 15px 0;
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.2s ease-in-out;
+}
+
+.menu-item a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.menu-item .icon {
+  margin-right: 15px;
+  font-size: 20px;
+  color: #1abc9c;
+}
+
+/* Submenú */
+.submenu {
+  padding-left: 20px;
+  margin-top: 10px;
+  /* border-left: 3px solid rgba(255, 255, 255, 0.5); */ /* Elimina la raya vertical */
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+  list-style: none; /* Elimina las bolitas del submenú */
+}
+
+.submenu.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.submenu a {
+  padding: 12px 25px;
+  font-size: 14px;
+  color: #ccc;
+  display: block;
+  transition: color 0.3s, background 0.3s, padding-left 0.3s;
+}
+
+.submenu a:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  padding-left: 30px;
+  border-radius: 5px;
+}
+
+/* Flecha de submenú */
+.arrow {
+  font-size: 14px;
+  transition: transform 0.3s ease-in-out;
+  color: #1abc9c;
+  margin-left: auto;
+}
+
+.arrow.rotate {
+  transform: rotate(90deg);
+}
+
+/* Pie del Sidebar */
+.sidebar-footer {
+  margin-top: auto;
+  text-align: center;
+}
+
+.logout-btn {
+  width: 100%;
+  background: #e74c3c;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logout-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Estilo para el colapso del sidebar */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar.collapsed .sidebar-header h2,
+.sidebar.collapsed .sidebar-header p,
+.sidebar.collapsed .menu-item span,
+.sidebar.collapsed .logout-btn span {
+  display: none;
+}
+
+.sidebar.collapsed .menu-item a {
+  justify-content: center;
+}
+
+.sidebar.collapsed .menu-item .icon {
+  margin-right: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+      width: 80px;
+  }
+
+  .sidebar-header h2,
+  .sidebar-header p,
+  .menu-item span,
+  .logout-btn span {
+      display: none;
+  }
+
+  .menu-item a {
+      justify-content: center;
+  }
+
+  .menu-item .icon {
+      margin-right: 0;
+  }
+}

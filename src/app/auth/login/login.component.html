@@ -1,0 +1,85 @@
+<!-- Mostrar mensaje de éxito o error -->
+<div *ngIf="successMessage" class="alert mt-2" [ngClass]="{
+  'alert-success': isSuccess,
+  'alert-danger': !isSuccess
+}" [class.show]="successMessage">
+  <div *ngIf="isSuccess">
+    <i class="fas fa-spinner fa-spin"></i> {{ successMessage }}
+  </div>
+  <div *ngIf="!isSuccess">
+    {{ successMessage }}
+  </div>
+</div>
+
+<!-- Contenedor que centra el formulario -->
+<div class="container">
+  <div class="card shadow-lg rounded-4">
+    <div class="card-body">
+      <h2 class="text-center mb-4 text-primary">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+      </h2>
+
+      <form (ngSubmit)="login()" #loginForm="ngForm">
+        <!-- Campo Usuario -->
+        <div class="mb-3">
+          <label for="username" class="form-label">
+            <i class="fas fa-user"></i> Usuario
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-user"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              [(ngModel)]="user.username"
+              name="username"
+              required
+              minlength="4"
+              #username="ngModel"
+              (input)="user.username = user.username.toUpperCase()"
+              placeholder="Ingrese su usuario"
+            >
+          </div>
+          <div *ngIf="username.invalid && username.touched" class="text-danger">
+            El nombre de usuario debe tener al menos 4 letras mayúsculas.
+          </div>
+        </div>
+
+        <!-- Campo Contraseña -->
+        <div class="mb-3">
+          <label for="password" class="form-label">
+            <i class="fas fa-lock"></i> Contraseña
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-lock"></i>
+            </span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control form-control-lg"
+              [(ngModel)]="user.password"
+              name="password"
+              required
+              minlength="6"
+              #password="ngModel"
+              placeholder="Ingrese su contraseña"
+            >
+            <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="password.invalid && password.touched" class="text-danger">
+            La contraseña debe tener al menos 6 caracteres.
+          </div>
+        </div>
+
+        <!-- Botón Ingreso -->
+        <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="loginForm.invalid || !validateUsername(user.username)">
+          <i class="fas fa-sign-in-alt"></i> Ingresar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,31 @@
+/* Limitar el ancho del contenedor */
+.container {
+    max-width: 1200px;
+  }
+  
+  /* Estilo para la tarjeta */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Quitar borde inferior en el header de la tarjeta */
+  .card-header {
+    border-bottom: none;
+  }
+  
+  /* Efecto hover en las filas de la tabla */
+  .table-hover tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  /* Transición suave para botones */
+  .btn {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  

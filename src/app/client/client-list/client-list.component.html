@@ -1,0 +1,68 @@
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Lista de Clientes</h2>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Documento</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let client of clients">
+              <td>{{ client.firstName }}</td>
+              <td>{{ client.lastName }}</td>
+              <td>{{ client.email }}</td>
+              <td>{{ client.phone }}</td>
+              <td>{{ client.documentNumber }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm me-2" (click)="editClient(client)">Editar</button>
+                <!-- Al hacer clic, se abre el modal de confirmación -->
+                <button class="btn btn-danger btn-sm" (click)="openDeleteModal(client.id!)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación para eliminación -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Confirmación de Eliminación</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss('cancel')"></button>
+    </div>
+    <div class="modal-body">
+      <p>¿Está seguro de que desea eliminar este cliente?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="confirmDeletion(modal)">Eliminar</button>
+    </div>
+  </ng-template>
+
+  <!-- Modal para mostrar el mensaje del backend -->
+  <ng-template #deleteResponseModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Mensaje del Servidor</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <p [ngClass]="{'text-danger': backendMessage.includes('Error'), 'text-success': !backendMessage.includes('Error')}">
+        {{ backendMessage }}
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="modal.close()">Aceptar</button>
+    </div>
+  </ng-template>
+</div>

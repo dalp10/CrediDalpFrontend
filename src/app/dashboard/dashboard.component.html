@@ -1,0 +1,15 @@
+<div class="dashboard">
+    <div class="content">
+        <h1>Bienvenido al Dashboard</h1>
+        <div class="dashboard-box">
+            <div *ngIf="role === 'admin'" class="admin-section">
+                <h2>Panel de Administrador</h2>
+                <p>Administrar usuarios, configurar permisos y ver estadísticas.</p>
+            </div>
+            <div *ngIf="role === 'user'" class="user-section">
+                <h2>Panel de Usuario</h2>
+                <p>Ver perfil y acceder a opciones personalizadas.</p>
+            </div>
+        </div>
+    </div>
+</div>

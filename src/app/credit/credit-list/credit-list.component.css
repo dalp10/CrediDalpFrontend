@@ -1,0 +1,9 @@
+.credit-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .credit-card {
+    width: 300px;
+  }
