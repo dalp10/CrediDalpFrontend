@@ -1,3 +1,5 @@
+import { Client } from './client.model';
+
 export interface Credit {
   id?: number;
   capitalAmount: number;
@@ -5,7 +7,8 @@ export interface Credit {
   startDate: string;
   //endDate: string;
   gracePeriodDays: number;
-  clientId: number;
+  clientId : number,
+  client: Client;
   status: CreditStatus;
   numberOfInstallments?: number; // Agregado
   tea?: number; // Agregado

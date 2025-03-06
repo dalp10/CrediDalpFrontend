@@ -16,6 +16,7 @@ import { ClientSearchModalComponent } from '../../shared/client-search-modal/cli
 import { CreditStatus } from '../../models/credit.model';
 import { PaymentScheduleModalComponent } from '../../shared/payment-schedule-modal/payment-schedule-modal.component';
 import { formatDate } from '@angular/common';
+import { ClientService } from '../../services/client.service'; // Servicio para obtener clientes
 
 @Component({
   selector: 'app-create-credit',
@@ -44,7 +45,8 @@ export class CreateCreditComponent implements OnInit {
     private fb: FormBuilder,
     private creditService: CreditService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private clientService: ClientService // Inyección del servicio de clientes
   ) {
     this.creditForm = this.fb.group({
       capitalAmount: ['', [Validators.required, Validators.min(0)]],
@@ -146,12 +148,20 @@ export class CreateCreditComponent implements OnInit {
       const formattedStartDate = this.formatDate(startDate);
       const formattedFirstPaymentDate = this.formatDate(firstPaymentDate);
   
-      // Crear el objeto crédito
+
+      const client = await this.clientService.getClientById(clientId).toPromise();
+
+      // Verify if the client data is valid
+      if (!client) {
+        throw new Error('No se pudo obtener el cliente. Verifique el ID proporcionado.');
+      }
+    // Crear el objeto crédito
       const credit: Credit = {
         capitalAmount,
         startDate: formattedStartDate,
         gracePeriodDays,
-        clientId,
+        client, // Assign the fetched client data
+        clientId : clientId,
         status: CreditStatus.ACTIVE,
       };
   
