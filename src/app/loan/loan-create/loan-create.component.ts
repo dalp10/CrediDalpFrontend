@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { ClientService } from '../../services/client.service'; // Servicio para obtener clientes
 import { Client } from '../../models/client.model'; // Modelo de Cliente
 import { HttpErrorResponse } from '@angular/common/http';
+import { ClientSearchModalComponent } from '../../shared/client-search-modal/client-search-modal.component';
+import { MatDialog } from '@angular/material/dialog'; // Importa MatDialog
 
 @Component({
   selector: 'app-loan-create',
@@ -25,20 +27,18 @@ export class LoanCreateComponent implements OnInit {
     clientName: '', // Nuevo campo para mostrar el nombre del cliente seleccionado
   };
 
-
   responseMessage: string = ''; // Mensaje de respuesta para mostrar después del backend
-  searchQuery: string = ''; // Consulta de búsqueda de clientes
-  clients: Client[] = []; // Lista de clientes encontrados
+  minDueDate: string = ''; // Fecha mínima para el campo de vencimiento
 
   @ViewChild('confirmationModal') confirmationModal!: TemplateRef<any>;
   @ViewChild('responseModal') responseModal!: TemplateRef<any>;
-  @ViewChild('clientSearchModal') clientSearchModal!: TemplateRef<any>;
 
   constructor(
     private loanService: LoanService,
     private clientService: ClientService, // Inyección del servicio de clientes
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private dialog: MatDialog // Inyecta MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -50,39 +50,28 @@ export class LoanCreateComponent implements OnInit {
     const dueDate = new Date(today);
     dueDate.setMonth(today.getMonth() + 1);
     this.loan.dueDate = dueDate.toISOString().split('T')[0];
+
+    // Calcular la fecha mínima para el campo de vencimiento (un mes después de la fecha de emisión)
+    this.minDueDate = dueDate.toISOString().split('T')[0];
   }
 
   // Función para abrir el modal de búsqueda de clientes
   openClientSearchModal() {
-    this.searchQuery = ''; // Reinicia la consulta
-    this.clients = []; // Reinicia la lista de clientes
-    this.modalService.open(this.clientSearchModal);
-  }
+    const dialogRef = this.dialog.open(ClientSearchModalComponent, {
+      width: '600px', // Ancho del modal
+      data: {} // Puedes pasar datos adicionales si es necesario
+    });
 
-  // Función para buscar clientes según la consulta
-  searchClients() {
-    if (this.searchQuery) {
-      this.clientService.getAllClients().subscribe((clients) => {
-        this.clients = clients.filter(
-          (client) =>
-            client.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            client.lastName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            client.documentNumber.includes(this.searchQuery)
-        );
-      });
-    } else {
-      this.clients = [];
-    }
+    dialogRef.afterClosed().subscribe((selectedClientId: number) => {
+      if (selectedClientId) {
+        // Busca el cliente seleccionado por su ID
+        this.clientService.getClientById(selectedClientId).subscribe((client) => {
+          this.loan.client = client; // Asigna el cliente seleccionado
+          this.loan.clientName = `${client.firstName} ${client.lastName}`; // Asigna el nombre completo
+        });
+      }
+    });
   }
-
-  // Función para seleccionar un cliente
-  selectClient(client: Client) {
-    this.loan.client = client; // Asigna el objeto cliente completo
-    this.loan.clientName = `${client.firstName} ${client.lastName}`; // Asigna el nombre completo
-    this.modalService.dismissAll(); // Cierra el modal de búsqueda
-  }
-  // Función que maneja el envío del formulario
-  
 
   // Función para abrir el modal de respuesta
   openResponseModal() {
@@ -116,9 +105,9 @@ export class LoanCreateComponent implements OnInit {
       alert('Por favor, asegúrate de seleccionar las fechas correctamente.');
       return;
     }
-  
+
     console.log('Objeto loan antes de enviar:', this.loan); // Verifica el objeto loan
-  
+
     this.loanService.createLoan(this.loan).subscribe(
       (response) => {
         console.log('Respuesta del backend:', response); // Verifica la respuesta
@@ -132,6 +121,7 @@ export class LoanCreateComponent implements OnInit {
       }
     );
   }
+
   // Función para abrir el modal de confirmación antes de enviar
   openConfirmationModal() {
     if (this.loan.client === null) {

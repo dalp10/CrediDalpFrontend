@@ -70,6 +70,7 @@
         name="dueDate"
         [(ngModel)]="loan.dueDate"
         required
+        [min]="minDueDate" 
         [ngClass]="{'is-invalid': loanForm.submitted && !loan.dueDate}"
       />
       <div *ngIf="loanForm.submitted && !loan.dueDate" class="invalid-feedback">
@@ -152,41 +153,6 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="modal.close()">
       <i class="fas fa-check"></i> Aceptar
-    </button>
-  </div>
-</ng-template>
-
-<!-- Modal de búsqueda de clientes -->
-<ng-template #clientSearchModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title"><i class="fas fa-search"></i> Buscar Cliente</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <input
-      type="text"
-      class="form-control"
-      [(ngModel)]="searchQuery"
-      placeholder="Buscar cliente por nombre o documento"
-    />
-    <button type="button" class="btn btn-primary mt-2" (click)="searchClients()">
-      <i class="fas fa-search"></i> Buscar
-    </button>
-    <ul class="list-group mt-3">
-      <li
-        class="list-group-item"
-        *ngFor="let client of clients"
-        (click)="selectClient(client)"
-      >
-        {{ client.firstName }} {{ client.lastName }} - {{ client.documentNumber }}
-      </li>
-    </ul>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">
-      <i class="fas fa-times"></i> Cerrar
     </button>
   </div>
 </ng-template>
