@@ -1,0 +1,5 @@
+/* Estilos globales para los modales */
+.mat-dialog-container {
+    border-radius: 8px !important;
+    padding: 0 !important;
+  }

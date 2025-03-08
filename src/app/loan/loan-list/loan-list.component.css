@@ -1,149 +1,35 @@
-/* loan-list.component.css */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  h2 {
-    color: #343a40;
-    font-weight: bold;
-  }
-  
-  .table {
-    margin-top: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .table thead th {
-    background-color: #343a40;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .table tbody tr:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .badge {
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .badge-success {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .badge-warning {
-    background-color: #ffc107;
-    color: black;
-  }
-  
-  .badge-danger {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn-sm {
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  
-  .btn-warning {
-    background-color: #ffc107;
-    border-color: #ffc107;
-  }
-  
-  .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-  
-  .btn-warning:hover {
-    background-color: #e0a800;
-    border-color: #e0a800;
-  }
-  
-  .btn-danger:hover {
-    background-color: #c82333;
-    border-color: #c82333;
-  }
-
-  /* Estilos para el modal de respuesta */
-#responseModal .modal-content {
-  background-color: #f8f9fa;
-  border-radius: 10px;
-}
-
-#responseModal .modal-header {
-  background-color: #343a40;
-  color: white;
-  border-radius: 10px 10px 0 0;
-}
-
-#responseModal .modal-body {
-  font-size: 16px;
-  color: #343a40;
-}
-
-/* Estilos para el modal de detalles del préstamo */
-#loanDetailsModal .modal-content {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#loanDetailsModal .modal-header {
-  background-color: #343a40;
-  color: white;
-  border-radius: 10px 10px 0 0;
-  padding: 15px;
-}
-
-#loanDetailsModal .modal-title {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-#loanDetailsModal .modal-body {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  font-size: 16px;
-  color: #343a40;
 }
 
-#loanDetailsModal .modal-body p {
-  margin-bottom: 15px;
-}
-
-#loanDetailsModal .modal-body strong {
-  color: #343a40;
+h2 {
+  text-align: center;
+  color: #3f51b5;
   font-weight: bold;
 }
 
-#loanDetailsModal .modal-footer {
-  border-top: 1px solid #e9ecef;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 0 0 10px 10px;
+.mat-elevation-z8 {
+  width: 100%;
+  margin-top: 20px;
 }
 
-#loanDetailsModal .btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
+.success-chip {
+  background-color: #28a745;
+  color: white;
 }
 
-#loanDetailsModal .btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
+.warning-chip {
+  background-color: #ffc107;
+  color: black;
 }
 
-#loanDetailsModal .btn-secondary {
-  background-color: #6c757d;
-  border-color: #6c757d;
+.danger-chip {
+  background-color: #dc3545;
+  color: white;
 }
 
-#loanDetailsModal .btn-secondary:hover {
-  background-color: #5a6268;
-  border-color: #5a6268;
+.mat-paginator {
+  margin-top: 20px;
 }

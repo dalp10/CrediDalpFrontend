@@ -1,158 +1,123 @@
-<div class="container mt-5">
-  <h2>Crear Préstamo</h2>
+<div class="container">
+  <h2 class="title">Crear Préstamo</h2>
 
-  <!-- Formulario -->
-  <form (ngSubmit)="onSubmit()" #loanForm="ngForm">
-    <div class="form-group">
-      <label for="loanAmount">
-        <i class="fas fa-money-bill-wave"></i> Monto del Préstamo
-      </label>
+  <form (ngSubmit)="onSubmit()" #loanForm="ngForm" class="form-container">
+    <!-- Monto del Préstamo -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>
+        <mat-icon>attach_money</mat-icon> Monto del Préstamo
+      </mat-label>
       <input
+        matInput
         type="number"
-        class="form-control"
         id="loanAmount"
         name="amount"
         [(ngModel)]="loan.amount"
         placeholder="Introduce el monto del préstamo"
         required
-        [ngClass]="{'is-invalid': loanForm.submitted && loan.amount <= 0}"
       />
-      <div *ngIf="loanForm.submitted && loan.amount <= 0" class="invalid-feedback">
+      <mat-error *ngIf="loanForm.submitted && loan.amount <= 0">
         El monto debe ser mayor a 0.
-      </div>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="interestRate">
-        <i class="fas fa-percentage"></i> Tasa de Interés (%)
-      </label>
+    <!-- Tasa de Interés -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>
+        <mat-icon>percent</mat-icon> Tasa de Interés (%)
+      </mat-label>
       <input
+        matInput
         type="number"
-        class="form-control"
         id="interestRate"
         name="interestRate"
         [(ngModel)]="loan.interestRate"
         placeholder="Introduce la tasa de interés"
         required
-        [ngClass]="{'is-invalid': loanForm.submitted && loan.interestRate <= 0}"
       />
-      <div *ngIf="loanForm.submitted && loan.interestRate <= 0" class="invalid-feedback">
+      <mat-error *ngIf="loanForm.submitted && loan.interestRate <= 0">
         La tasa de interés debe ser mayor que 0.
-      </div>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="issueDate">
-        <i class="fas fa-calendar-alt"></i> Fecha de Emisión
-      </label>
+    <!-- Fecha de Emisión -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>
+        <mat-icon>event</mat-icon> Fecha de Emisión
+      </mat-label>
       <input
-        type="date"
-        class="form-control"
-        id="issueDate"
-        name="issueDate"
+        matInput
+        [matDatepicker]="issueDatePicker"
         [(ngModel)]="loan.issueDate"
+        (dateChange)="onIssueDateChange()"
+        name="issueDate"
         required
-        [ngClass]="{'is-invalid': loanForm.submitted && !loan.issueDate}"
       />
-      <div *ngIf="loanForm.submitted && !loan.issueDate" class="invalid-feedback">
+      <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #issueDatePicker></mat-datepicker>
+      <mat-error *ngIf="loanForm.submitted && !loan.issueDate">
         La fecha de emisión es obligatoria.
-      </div>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="dueDate">
-        <i class="fas fa-calendar-check"></i> Fecha de Vencimiento
-      </label>
+    <!-- Fecha de Vencimiento -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>
+        <mat-icon>event_available</mat-icon> Fecha de Vencimiento
+      </mat-label>
       <input
-        type="date"
-        class="form-control"
-        id="dueDate"
-        name="dueDate"
+        matInput
+        [matDatepicker]="dueDatePicker"
         [(ngModel)]="loan.dueDate"
+        [min]="minDueDate"
+        name="dueDate"
         required
-        [min]="minDueDate" 
-        [ngClass]="{'is-invalid': loanForm.submitted && !loan.dueDate}"
       />
-      <div *ngIf="loanForm.submitted && !loan.dueDate" class="invalid-feedback">
+      <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #dueDatePicker></mat-datepicker>
+      <mat-error *ngIf="loanForm.submitted && !loan.dueDate">
         La fecha de vencimiento es obligatoria.
-      </div>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="clientId">
-        <i class="fas fa-user"></i> Cliente
-      </label>
-      <div class="input-group">
-        <input
-          type="text"
-          class="form-control"
-          id="clientId"
-          name="clientId"
-          [(ngModel)]="loan.clientName"
-          placeholder="Selecciona un cliente"
-          readonly
-          required
-        />
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="openClientSearchModal()"
-        >
-          <i class="fas fa-search"></i> Buscar Cliente
-        </button>
-      </div>
-      <div *ngIf="loanForm.submitted && !loan.client" class="invalid-feedback">
+    <!-- Cliente -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>
+        <mat-icon>person</mat-icon> Cliente
+      </mat-label>
+      <input
+        matInput
+        type="text"
+        id="clientId"
+        name="clientId"
+        [(ngModel)]="loan.clientName"
+        placeholder="Selecciona un cliente"
+        readonly
+        required
+      />
+      <button
+        mat-icon-button
+        type="button"
+        (click)="openClientSearchModal()"
+        matSuffix
+      >
+        <mat-icon>search</mat-icon>
+      </button>
+      <mat-error *ngIf="loanForm.submitted && !loan.client">
         Debes seleccionar un cliente.
-      </div>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <!-- Botón para abrir el modal de confirmación -->
+    <!-- Botón de Crear Préstamo -->
     <button
+      mat-raised-button
+      color="primary"
       type="button"
-      class="btn btn-primary"
       (click)="openConfirmationModal()"
       [disabled]="!loanForm.valid"
+      class="submit-button"
     >
-      <i class="fas fa-check"></i> Crear Préstamo
+      <mat-icon>check</mat-icon> Crear Préstamo
     </button>
   </form>
 </div>
-
-<!-- Modal de confirmación -->
-<ng-template #confirmationModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title"><i class="fas fa-check-circle"></i> Confirmar Préstamo</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    ¿Estás seguro de que deseas crear este préstamo?
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">
-      <i class="fas fa-times"></i> Cancelar
-    </button>
-    <button type="button" class="btn btn-primary" (click)="modal.close('confirm')">
-      <i class="fas fa-check"></i> Confirmar
-    </button>
-  </div>
-</ng-template>
-
-<!-- Modal de respuesta -->
-<ng-template #responseModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title"><i class="fas fa-info-circle"></i> Respuesta</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    {{ responseMessage }}
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="modal.close()">
-      <i class="fas fa-check"></i> Aceptar
-    </button>
-  </div>
-</ng-template>

@@ -1,0 +1,75 @@
+<div class="modal-container">
+  <h2 mat-dialog-title>Detalles del Préstamo</h2>
+  <mat-dialog-content>
+    <div class="loan-details">
+      <!-- Sección 1: Información básica -->
+      <div class="detail-section">
+        <h3 class="section-title">Información Básica</h3>
+        <div class="detail-row">
+          <span class="detail-label">ID:</span>
+          <span class="detail-value">{{ data.loan.id }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Cliente:</span>
+          <span class="detail-value">{{ data.loan.client.firstName }} {{ data.loan.client.lastName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Monto:</span>
+          <span class="detail-value">{{ data.loan.amount | currency }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Tasa de Interés:</span>
+          <span class="detail-value">{{ data.loan.interestRate }}%</span>
+        </div>
+      </div>
+
+      <!-- Sección 2: Fechas y Código -->
+      <div class="detail-section">
+        <h3 class="section-title">Fechas y Código</h3>
+        <div class="detail-row">
+          <span class="detail-label">Fecha de Emisión:</span>
+          <span class="detail-value">{{ data.loan.issueDate | date }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha de Vencimiento:</span>
+          <span class="detail-value">{{ data.loan.dueDate | date }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Código:</span>
+          <span class="detail-value">{{ data.loan.loanCode }}</span>
+        </div>
+      </div>
+
+      <!-- Sección 3: Estado y Montos -->
+      <div class="detail-section">
+        <h3 class="section-title">Estado y Montos</h3>
+        <div class="detail-row">
+          <span class="detail-label">Estado:</span>
+          <span class="detail-value">
+            <mat-chip
+              [ngClass]="{
+                'success-chip': data.loan.status === 'APPROVED',
+                'warning-chip': data.loan.status === 'PENDING',
+                'danger-chip': data.loan.status === 'REJECTED'
+              }"
+            >
+              {{ data.loan.status }}
+            </mat-chip>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Monto de Interés:</span>
+          <span class="detail-value">{{ data.loan.interestAmount | currency }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Monto Total:</span>
+          <span class="detail-value">{{ data.loan.totalAmount | currency }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="printDetails()">Imprimir</button>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </mat-dialog-actions>
+</div>

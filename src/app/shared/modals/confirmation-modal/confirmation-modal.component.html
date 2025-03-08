@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    <mat-icon>check_circle</mat-icon> Confirmar
+  </h4>
+</div>
+<div class="modal-body">
+  {{ data.message }}
+</div>
+<div class="modal-footer">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon> Cancelar
+  </button>
+  <button mat-button color="primary" (click)="onConfirm()">
+    <mat-icon>check</mat-icon> Confirmar
+  </button>
+</div>
