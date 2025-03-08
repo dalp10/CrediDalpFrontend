@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { importProvidersFrom } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
+import { provideNativeDateAdapter } from '@angular/material/core'; // Importa provideNativeDateAdapter
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 
@@ -26,5 +27,6 @@ bootstrapApplication(AppComponent, {
       })
     ),
     provideRouter(routes),
-  ]
-}).catch(err => console.error(err));
+    provideNativeDateAdapter(), // Añade provideNativeDateAdapter aquí
+  ],
+}).catch((err) => console.error(err));

@@ -1,0 +1,250 @@
+/* Estilos generales para la página */
+.container {
+  padding: 2rem;
+  background-color: #f4f7fc; /* Fondo más suave */
+  overflow: visible; /* Asegura que el contenido no se corte */
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1.5rem; /* Mayor separación */
+}
+
+mat-card {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 12px; /* Bordes más redondeados */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+  background-color: white; /* Fondo blanco para mayor contraste */
+  overflow: visible; /* Asegura que el contenido no se corte */
+}
+
+mat-card-header {
+  background-color: #3f51b5;
+  color: white;
+  padding: 20px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.7rem; /* Aumenta el tamaño para hacerlo más visible */
+  margin-bottom: 1.5rem;
+}
+
+mat-card-title mat-icon {
+  margin-right: 12px; /* Espaciado mayor entre el ícono y el texto */
+}
+
+mat-form-field {
+  margin-bottom: 1.5rem;
+}
+
+mat-radio-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 1.5rem;
+}
+
+mat-list {
+  margin-top: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: visible; /* Asegura que el contenido no se corte */
+}
+
+mat-list-item {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center; /* Alinea los elementos verticalmente */
+}
+
+mat-list-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* Asegura que la tabla ocupe todo el ancho del contenedor */
+mat-table {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  table-layout: fixed; /* Hace que las celdas ocupen el espacio disponible */
+}
+
+/* Asegura que las celdas de la tabla ocupen el espacio disponible */
+mat-header-cell, mat-cell {
+  padding: 12px;
+  font-size: 1rem;
+  text-align: center;
+  word-wrap: break-word; /* Asegura que el contenido largo se ajuste bien */
+}
+
+/* Ajusta el ancho de las columnas */
+.mat-column-installmentNumber {
+  width: 15%;
+}
+
+.mat-column-dueDate {
+  width: 20%;
+}
+
+.mat-column-amount {
+  width: 20%;
+}
+
+.mat-column-status {
+  width: 20%;
+}
+
+.mat-column-actions {
+  width: 25%;
+  text-align: center; /* Alinea la columna de acciones */
+}
+
+mat-row {
+  transition: background-color 0.3s ease;
+}
+
+mat-row:hover {
+  background-color: #f5f5f5; /* Color de fondo al pasar el mouse */
+}
+
+mat-header-cell {
+  font-weight: bold;
+  background-color: #3f51b5; /* Color de fondo azul */
+  color: white; /* Texto blanco */
+}
+
+mat-cell {
+  padding: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  word-wrap: break-word; /* Asegura que el contenido largo se ajuste bien */
+}
+
+.mat-column-actions {
+  text-align: center; /* Alinea la columna de acciones */
+}
+
+.mat-column-status {
+  text-align: center; /* Alinea la columna de estado */
+}
+
+/* Estilo de los botones en la tabla */
+.mat-column-actions button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mat-column-actions button:hover {
+  color: #3f51b5; /* Cambia el color al pasar el mouse */
+}
+
+.mat-column-actions button[disabled] {
+  color: #b0bec5; /* Color gris para botones deshabilitados */
+  cursor: not-allowed;
+}
+
+mat-icon {
+  vertical-align: middle; /* Alinea los íconos verticalmente */
+}
+
+button[mat-raised-button] {
+  margin-top: 1.5rem;
+  padding: 10px 20px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+}
+
+h3 {
+  margin-top: 1.5rem;
+  color: #3f51b5;
+  font-size: 1.4rem; /* Aumenta el tamaño para mejor visibilidad */
+}
+
+.search-section {
+  background-color: #f0f0f0;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.search-section mat-form-field {
+  background-color: white;
+  border-radius: 6px;
+}
+
+/* Estilos adicionales para mejorar la apariencia */
+mat-card-content {
+  padding: 20px;
+}
+
+mat-list-item mat-icon {
+  color: #3f51b5; /* Color para los íconos */
+}
+
+button[mat-raised-button] {
+  background-color: #3f51b5;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+button[mat-raised-button]:hover {
+  background-color: #303f9f; /* Color más oscuro al pasar el mouse */
+}
+
+mat-table {
+  border-radius: 8px;
+  overflow: visible; /* Asegura que el contenido no se corte */
+}
+
+mat-row {
+  transition: background-color 0.3s ease;
+}
+
+mat-row:hover {
+  background-color: #e8eaf6; /* Color más claro al pasar el mouse */
+}
+
+mat-cell mat-icon {
+  color: #3f51b5; /* Color para los íconos en la tabla */
+}
+
+/* Estilos para los mensajes de no resultados */
+mat-card.error-message {
+  background-color: #fff3e0; /* Fondo naranja claro */
+  border-left: 4px solid #ff9800; /* Borde izquierdo naranja */
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+mat-card.error-message mat-icon {
+  color: #ff9800; /* Color naranja para el ícono */
+}
+
+/* Estilos para los botones de acciones en la tabla */
+.mat-column-actions button {
+  background-color: #3f51b5;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.mat-column-actions button:hover {
+  background-color: #303f9f; /* Color más oscuro al pasar el mouse */
+}
+
+/* Estilos para los botones deshabilitados */
+.mat-column-actions button[disabled] {
+  background-color: #b0bec5; /* Color gris para botones deshabilitados */
+  cursor: not-allowed;
+}

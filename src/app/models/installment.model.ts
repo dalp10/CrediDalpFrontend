@@ -1,5 +1,6 @@
 export interface Installment {
     id: number;
+    installmentNumber: number; // Asegúrate de que esta propiedad exista
     dueDate: Date;
     amount: number;
     capitalAmount: number;

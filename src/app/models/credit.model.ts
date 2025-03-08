@@ -3,9 +3,8 @@ import { Client } from './client.model';
 export interface Credit {
   id?: number;
   capitalAmount: number;
-  //interestRate: number;
+  code?: string; // Código único del crédito (ejemplo: CRE-001)
   startDate: string;
-  //endDate: string;
   gracePeriodDays: number;
   clientId : number,
   client: Client;
@@ -13,6 +12,7 @@ export interface Credit {
   numberOfInstallments?: number; // Agregado
   tea?: number; // Agregado
   firstPaymentDate?: Date; // Agregado
+  installmentNumber? : number
 }
 
   

@@ -1,0 +1,134 @@
+<!-- Mensaje si no se encuentran clientes -->
+<div *ngIf="clients.length === 0 && searchQuery && backendResponseReceived && searchType === 'client'">
+  <mat-card class="mat-elevation-z8 full-width" style="background-color: #f9f9f9; border-radius: 8px; padding: 1rem;">
+    <mat-icon style="color: #f44336;">error</mat-icon>
+    <span>No se encontraron clientes que coincidan con "{{ searchQuery }}". Por favor, intenta con otro nombre.</span>
+  </mat-card>
+</div>
+
+<!-- Mensaje si no se encuentran créditos -->
+<div *ngIf="credits.length === 0 && searchQuery && backendResponseReceived && searchType === 'credit'">
+  <mat-card class="mat-elevation-z8 full-width" style="background-color: #f9f9f9; border-radius: 8px; padding: 1rem;">
+    <mat-icon style="color: #f44336;">error</mat-icon>
+    <span>No se encontraron créditos que coincidan con "{{ searchQuery }}". Verifica el código del crédito o prueba otra
+      búsqueda.</span>
+  </mat-card>
+</div>
+
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>payment</mat-icon>
+        Listado de Préstamos
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Sección de Búsqueda -->
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar préstamo por nombre del cliente</mat-label>
+          <input matInput [(ngModel)]="searchQuery" placeholder="Ingrese nombre del cliente">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="search()">
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+      </div>
+
+      <!-- Resultados de Búsqueda -->
+      <div *ngIf="clients.length > 0">
+        <h3>
+          <mat-icon>people</mat-icon>
+          Clientes encontrados
+        </h3>
+        <mat-list>
+          <mat-list-item *ngFor="let client of clients" (click)="selectClient(client)">
+            <mat-icon>person</mat-icon>
+            {{ client.firstName }} {{ client.lastName }} - {{ client.documentNumber }}
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Préstamos del Cliente Seleccionado -->
+      <div *ngIf="selectedClient">
+        <h3>
+          <mat-icon>person</mat-icon>
+          Préstamos de {{ selectedClient.firstName }} {{ selectedClient.lastName }}
+        </h3>
+        <mat-list>
+          <mat-list-item *ngFor="let credit of credits" (click)="selectCredit(credit)">
+            <mat-icon>credit_card</mat-icon>
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+              <span><strong>Código:</strong> {{ credit.code }}</span>
+              <span><strong>Monto:</strong> {{ credit.capitalAmount | currency }}</span>
+              <span><strong>Total de Cuotas:</strong> {{ credit.installmentNumber }}</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Cuotas del Préstamo Seleccionado -->
+      <div *ngIf="selectedCredit">
+        <h3>
+          <mat-icon>schedule</mat-icon>
+          Cuotas de {{ selectedCredit.code }}
+        </h3>
+        <div class="full-width"> <!-- Asegura que la tabla ocupe todo el ancho -->
+          <mat-table [dataSource]="installments" class="mat-elevation-z8 full-width">
+            <!-- Columna: Número de Cuota -->
+            <ng-container matColumnDef="installmentNumber">
+              <th mat-header-cell *matHeaderCellDef>Número de Cuota</th>
+              <td mat-cell *matCellDef="let installment">{{ installment.installmentNumber }}</td>
+            </ng-container>
+
+            <!-- Columna: Fecha de Vencimiento -->
+            <ng-container matColumnDef="dueDate">
+              <th mat-header-cell *matHeaderCellDef>Fecha de Vencimiento</th>
+              <td mat-cell *matCellDef="let installment">
+                <mat-icon>event</mat-icon>{{ installment.dueDate | date }}
+              </td>
+            </ng-container>
+
+            <!-- Columna: Monto -->
+            <ng-container matColumnDef="amount">
+              <th mat-header-cell *matHeaderCellDef>Monto</th>
+              <td mat-cell *matCellDef="let installment">
+                <mat-icon>attach_money</mat-icon>{{ installment.amount | currency }}
+              </td>
+            </ng-container>
+
+            <!-- Columna: Estado -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let installment">
+                <mat-icon [ngClass]="'status-' + installment.status.toLowerCase()">
+                  {{ installment.status === 'PENDING' ? 'schedule' : 'warning' }}
+                </mat-icon>
+                {{ installment.status }}
+              </td>
+            </ng-container>
+
+            <!-- Columna: Acciones -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let installment">
+                <button mat-icon-button color="primary" (click)="payInstallment(installment)"
+                  [disabled]="!isOldestInstallment(installment)">
+                  <mat-icon>payment</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <!-- Filas de la tabla -->
+            <tr mat-header-row *matHeaderRowDef="['installmentNumber', 'dueDate', 'amount', 'status', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['installmentNumber', 'dueDate', 'amount', 'status', 'actions']"></tr>
+          </mat-table>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

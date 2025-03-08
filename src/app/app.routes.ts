@@ -12,31 +12,56 @@ import { LoanListComponent } from './loan/loan-list/loan-list.component';  // Li
 import { LoanCreateComponent } from './loan/loan-create/loan-create.component';  // Crear préstamo
 import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';  // Editar préstamo
 
-// Nuevo componente para créditos
+// Componentes para créditos
 import { CreditListComponent } from './credit/credit-list/credit-list.component';  // Lista de créditos
-import { CreateCreditComponent } from './credit/create-credit/create-credit.component';
+import { CreateCreditComponent } from './credit/create-credit/create-credit.component';  // Crear crédito
+//import { EditCreditComponent } from './credit/edit-credit/edit-credit.component';  // Editar crédito
+
+// Componente de layout
 import { LayoutComponent } from './core/layaout/layout/layout.component';
+
+// Nuevos componentes para pagos
+import { PaymentListComponent } from './payments/payment-list.component'; // Lista de pagos
+//import { PaymentDetailComponent } from './paymentsnent';  // Detalle de pago
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent }, // Ruta sin layout
+
   {
     path: '', // Ruta principal que usa el layout
     component: LayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent }, // Ruta hija con layout
-      { path: 'list-user', component: UserListComponent }, // Ruta hija con layout
-      { path: 'create-user', component: UserCreateComponent }, // Ruta hija con layout
-      { path: 'edit-user/:id', component: UserEditComponent }, // Ruta hija con layout
-      { path: 'list-client', component: ClientListComponent }, // Ruta hija con layout
-      { path: 'create-client', component: ClientCreateComponent }, // Ruta hija con layout
-      { path: 'edit-client/:id', component: ClientCreateComponent }, // Ruta hija con layout
-      { path: 'loans', component: LoanListComponent }, // Ruta hija con layout
-      { path: 'create-loan', component: LoanCreateComponent }, // Ruta hija con layout
-      { path: 'edit-loan/:id', component: LoanEditComponent }, // Ruta hija con layout
-      { path: 'credits', component: CreditListComponent }, // Nueva ruta para la lista de créditos
-      { path: 'create-credit', component: CreateCreditComponent },
-      { path: '', redirectTo: '/dashboard', pathMatch: 'full' }, // Redirige a dashboard por defecto
+
+      // Rutas para usuarios
+      { path: 'list-user', component: UserListComponent }, // Lista de usuarios
+      { path: 'create-user', component: UserCreateComponent }, // Crear usuario
+      { path: 'edit-user/:id', component: UserEditComponent }, // Editar usuario
+
+      // Rutas para clientes
+      { path: 'list-client', component: ClientListComponent }, // Lista de clientes
+      { path: 'create-client', component: ClientCreateComponent }, // Crear cliente
+      { path: 'edit-client/:id', component: ClientCreateComponent }, // Editar cliente
+
+      // Rutas para préstamos
+      { path: 'loans', component: LoanListComponent }, // Lista de préstamos
+      { path: 'create-loan', component: LoanCreateComponent }, // Crear préstamo
+      { path: 'edit-loan/:id', component: LoanEditComponent }, // Editar préstamo
+
+      // Rutas para créditos
+      { path: 'credits', component: CreditListComponent }, // Lista de créditos
+      { path: 'create-credit', component: CreateCreditComponent }, // Crear crédito
+      //{ path: 'edit-credit/:id', component: EditCreditComponent }, // Editar crédito
+
+      // Rutas para pagos
+      { path: 'payments', component: PaymentListComponent }, // Lista de pagos
+      //{ path: 'payment-detail/:id', component: PaymentDetailComponent }, // Detalle de pago
+
+      // Redirige a dashboard por defecto
+      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     ],
   },
-  { path: '**', redirectTo: '/login' }, // Redirige a login si la ruta no existe
+
+  // Redirige a login si la ruta no existe
+  { path: '**', redirectTo: '/login' },
 ];
