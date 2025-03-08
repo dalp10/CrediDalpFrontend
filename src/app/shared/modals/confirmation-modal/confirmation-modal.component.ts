@@ -1,14 +1,16 @@
 import { Component, Inject } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-confirmation-modal',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
   templateUrl: './confirmation-modal.component.html',
-  styleUrls: ['./confirmation-modal.component.css'],
-  imports: [
-    MatIconModule  // Asegúrate de importar MatIconModule
-  ],
+  styleUrls: ['./confirmation-modal.component.css']
 })
 export class ConfirmationModalComponent {
   constructor(

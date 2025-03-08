@@ -1,19 +1,31 @@
-import { Component, OnInit, ViewChild, TemplateRef, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { ClientService } from '../../services/client.service';
 import { Client } from '../../models/client.model';
-import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUser, faEnvelope, faPhone, faIdCard, faSave, faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
+import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbModalModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatIconModule
+  ],
   templateUrl: './client-create.component.html',
   styleUrls: ['./client-create.component.css']
 })
@@ -23,17 +35,13 @@ export class ClientCreateComponent implements OnInit {
   isEditMode = false;
   backendMessage: string = '';
 
-  @ViewChild('confirmModal') confirmModal!: TemplateRef<any>;
-  @ViewChild('responseModal') responseModal!: TemplateRef<any>;
-  @ViewChild('cancelModal') cancelModal!: TemplateRef<any>;
-
-  private fb = inject(FormBuilder);
-  private clientService = inject(ClientService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private modalService = inject(NgbModal);
-
-  constructor() {
+  constructor(
+    private fb: FormBuilder,
+    private clientService: ClientService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog
+  ) {
     this.clientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -41,8 +49,6 @@ export class ClientCreateComponent implements OnInit {
       phone: ['', Validators.required],
       documentNumber: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]]
     });
-
-    library.add(faUser, faEnvelope, faPhone, faIdCard, faSave, faTimes, faCheck); // Agrega los iconos que vas a usar
   }
 
   ngOnInit(): void {
@@ -66,7 +72,6 @@ export class ClientCreateComponent implements OnInit {
           phone: client.phone,
           documentNumber: client.documentNumber
         });
-        console.log('Cliente cargado:', client);
       },
       error: (err) => {
         console.error('Error al cargar el cliente:', err);
@@ -76,72 +81,61 @@ export class ClientCreateComponent implements OnInit {
 
   onSubmit(): void {
     if (this.clientForm.invalid) {
-      console.log('Formulario inválido');
       return;
     }
-  
-    // Abre el modal de confirmación
-    const modalRef = this.modalService.open(this.confirmModal);
-    modalRef.result.then((result) => {
-      if (result === 'confirm') {
-        // Si el usuario confirma, procede con la acción
+
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      data: { message: this.isEditMode ? '¿Está seguro de que desea actualizar el cliente?' : '¿Está seguro de que desea crear el cliente?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         if (this.isEditMode && this.clientId !== null) {
-          // Actualizar cliente
           this.clientService.updateClient(this.clientId, this.clientForm.value).subscribe({
             next: (response) => {
               this.backendMessage = response;
-              this.openResponseModal(); // Abre el modal de respuesta
+              this.openResponseModal();
             },
             error: (err: HttpErrorResponse) => {
               this.backendMessage = err.error;
-              this.openResponseModal(); // Abre el modal de respuesta en caso de error
+              this.openResponseModal();
             }
           });
         } else {
-          // Crear cliente
           this.clientService.createClient(this.clientForm.value).subscribe({
             next: (response) => {
               this.backendMessage = response;
-              this.openResponseModal(); // Abre el modal de respuesta
+              this.openResponseModal();
             },
             error: (err: HttpErrorResponse) => {
               this.backendMessage = err.error;
-              this.openResponseModal(); // Abre el modal de respuesta en caso de error
+              this.openResponseModal();
             }
           });
         }
-      } else {
-        console.log('Se canceló la confirmación');
       }
-    }).catch((reason) => {
-      console.log('Modal de confirmación descartado:', reason);
-    });
-  }
-  
-  openResponseModal(): void {
-    const modalRef = this.modalService.open(this.responseModal);
-    modalRef.result.then(() => {
-      this.router.navigate(['/list-client']); // Redirige después de cerrar el modal
-    }).catch(() => {
-      this.router.navigate(['/list-client']); // Redirige si el modal se descarta
     });
   }
 
-  openCancelModal(): void {
-    // Abre el modal de cancelación
-    const modalRef = this.modalService.open(this.cancelModal);
-    modalRef.result.then(() => {
-      // Si el modal se confirma, redirige a la lista de clientes
-      this.router.navigate(['/list-client']);
-    }).catch(() => {
-      // Si el modal se descarta, redirige también
+  openResponseModal(): void {
+    const dialogRef = this.dialog.open(ResponseModalComponent, {
+      data: { message: this.backendMessage }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
       this.router.navigate(['/list-client']);
     });
   }
-  
 
   cancelOperation(): void {
-    this.modalService.dismissAll();
-    this.router.navigate(['/list-client']);
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      data: { message: '¿Seguro que deseas cancelar la operación? Los cambios no guardados se perderán.' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/list-client']);
+      }
+    });
   }
 }
