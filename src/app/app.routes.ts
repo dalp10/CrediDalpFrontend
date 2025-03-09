@@ -20,9 +20,10 @@ import { CreateCreditComponent } from './credit/create-credit/create-credit.comp
 // Componente de layout
 import { LayoutComponent } from './core/layaout/layout/layout.component';
 
-// Nuevos componentes para pagos
+// Componentes para pagos
 import { PaymentListComponent } from './payments/payment-list.component'; // Lista de pagos
-//import { PaymentDetailComponent } from './paymentsnent';  // Detalle de pago
+import { SinglePaymentComponent } from './single-payment/single-payment.component';// Pago de crédito de una sola cuota
+//import { PaymentDetailComponent } from './payments/payment-detail/payment-detail.component';  // Detalle de pago
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent }, // Ruta sin layout
@@ -55,6 +56,7 @@ export const routes: Routes = [
 
       // Rutas para pagos
       { path: 'payments', component: PaymentListComponent }, // Lista de pagos
+      { path: 'single-payment', component: SinglePaymentComponent }, // Pago de crédito de una sola cuota
       //{ path: 'payment-detail/:id', component: PaymentDetailComponent }, // Detalle de pago
 
       // Redirige a dashboard por defecto
