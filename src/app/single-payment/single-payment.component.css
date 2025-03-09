@@ -1,0 +1,252 @@
+/* Contenedor principal */
+.container {
+  padding: 2rem;
+  background-color: #f4f7fc;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Estilo para la tarjeta */
+mat-card {
+  max-width: 1000px;
+  width: 100%;
+  margin: 1rem auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border: 1px solid #e0e0e0; /* Borde sutil */
+  overflow: hidden;
+}
+
+/* Encabezado de la tarjeta */
+mat-card-header {
+  background-color: #3f51b5;
+  color: white;
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+mat-card-title mat-icon {
+  margin-right: 12px;
+  font-size: 1.8rem;
+}
+
+/* Sección de búsqueda */
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-form-field .mat-form-field-outline {
+  border-radius: 8px;
+  border-width: 1px;
+}
+
+mat-form-field .mat-form-field-outline-start,
+mat-form-field .mat-form-field-outline-end {
+  border-width: 1px;
+}
+
+/* Botón de búsqueda */
+button[mat-raised-button] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+button[mat-raised-button]:hover {
+  background-color: #303f9f;
+}
+
+/* Listado de clientes y créditos */
+mat-list {
+  margin-top: 1rem;
+}
+
+mat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: background-color 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+mat-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+mat-list-item mat-icon {
+  font-size: 1.5rem;
+  color: #3f51b5;
+}
+
+/* Créditos de cada cliente */
+.credit-details {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+}
+
+/* Grid de 2 columnas con espacio vertical y horizontal */
+.loan-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem; /* Espacio vertical y horizontal */
+  margin-top: 1rem;
+}
+
+/* Cada item (etiqueta y valor) */
+.detail-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Etiquetas con color destacado */
+.detail-item .label {
+  font-weight: 600;
+  color: #3f51b5;
+  min-width: 120px; /* Para alinear visualmente */
+}
+
+/* Valor con color suave */
+.detail-item .value {
+  color: #555;
+}
+
+/* Contenedor de acciones */
+.actions-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+
+/* Botones */
+button[mat-raised-button] {
+  margin-top: 1rem;
+  padding: 12px 20px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+button[mat-raised-button]:hover {
+  background-color: #303f9f;
+}
+
+button[mat-raised-button][color="primary"] {
+  background-color: #3f51b5;
+  color: white;
+}
+
+button[mat-raised-button][color="primary"]:hover {
+  background-color: #303f9f;
+}
+
+button[mat-raised-button][color="warn"] {
+  background-color: #f44336;
+  color: white;
+}
+
+button[mat-raised-button][color="warn"]:hover {
+  background-color: #d32f2f;
+}
+
+/* Mensajes de error */
+.error-message {
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+/* Estilos para los estados de los créditos */
+.pending {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.paid {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+
+/* Estilos para los estados de los créditos */
+.status {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.status.pending {
+  color: #ff9800; /* Naranja para créditos pendientes */
+  background-color: #fff3e0; /* Fondo claro */
+}
+
+.status.paid {
+  color: #4caf50; /* Verde para créditos pagados */
+  background-color: #e8f5e9; /* Fondo claro */
+}
+
+.status.overdue {
+  color: #f44336; /* Rojo para créditos vencidos */
+  background-color: #ffebee; /* Fondo claro */
+}
+
+.status.in-progress {
+  color: #2196f3; /* Azul para créditos en progreso */
+  background-color: #e3f2fd; /* Fondo claro */
+}

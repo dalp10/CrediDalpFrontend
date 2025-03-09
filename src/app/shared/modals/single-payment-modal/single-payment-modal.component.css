@@ -1,0 +1,153 @@
+/* Encabezado del modal */
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2c3e50;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-bottom: 1px solid #bdc3c7;
+  border-radius: 8px 8px 0 0;
+}
+
+mat-dialog-content {
+  padding: 24px;
+  background-color: #ffffff;
+}
+
+mat-dialog-actions {
+  padding: 16px;
+  background-color: #ecf0f1;
+  border-top: 1px solid #bdc3c7;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Deuda Total */
+.payment-amount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  color: #27ae60;
+  background-color: #e9f7ef;
+  padding: 14px;
+  border: 1px solid #a9dfbf;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.payment-amount mat-icon {
+  font-size: 1.5rem;
+  color: #27ae60;
+}
+
+/* Campos de formulario */
+mat-form-field.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+mat-form-field.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-color: #2980b9;
+}
+
+mat-form-field.mat-form-field-appearance-outline .mat-form-field-label {
+  color: #2980b9;
+}
+
+mat-form-field.mat-form-field-appearance-outline .mat-input-element {
+  color: #34495e;
+}
+
+/* Balance pendiente: se usa una grid para los nuevos campos */
+.balance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.balance-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: #34495e;
+}
+
+.balance-item mat-icon {
+  font-size: 1.5rem;
+  color: #2980b9;
+}
+
+/* Desglose del pago ingresado en una grid */
+.payment-breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.breakdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  padding: 8px;
+  background-color: #f4f7fc;
+  border: 1px solid #dfe4ea;
+  border-radius: 6px;
+}
+
+.breakdown-item mat-icon {
+  font-size: 1.4rem;
+}
+
+/* Selector y fecha */
+mat-datepicker-toggle {
+  color: #2980b9;
+}
+
+/* Botones */
+mat-dialog-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+mat-dialog-actions button[mat-button] {
+  color: #2980b9;
+}
+
+mat-dialog-actions button[mat-button]:hover {
+  background-color: #d6eaf8;
+}
+
+mat-dialog-actions button[color="primary"] {
+  background-color: #2980b9;
+  color: white;
+}
+
+mat-dialog-actions button[color="primary"]:hover {
+  background-color: #1f6391;
+}
+
+/* Íconos y mensajes de error */
+mat-icon {
+  vertical-align: middle;
+}
+
+mat-error {
+  font-size: 0.9rem;
+  color: #e74c3c;
+}

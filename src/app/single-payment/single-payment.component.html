@@ -1,0 +1,137 @@
+<div class="container">
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>search</mat-icon>
+        Buscar Cliente o Crédito
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Sección de Búsqueda de Clientes -->
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Buscar cliente por nombre o documento</mat-label>
+          <input matInput [(ngModel)]="searchQuery" placeholder="Ingrese nombre o documento del cliente">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="search()">
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+      </div>
+
+      <!-- Resultados de Búsqueda de Clientes -->
+      <div *ngIf="clients.length > 0">
+        <h3>
+          <mat-icon>people</mat-icon>
+          Clientes encontrados
+        </h3>
+        <mat-list>
+          <mat-list-item *ngFor="let client of clients" (click)="selectClient(client)">
+            <mat-icon>person</mat-icon>
+            {{ client.firstName }} {{ client.lastName }} - {{ client.documentNumber }}
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Créditos del Cliente Seleccionado -->
+      <div *ngIf="selectedClient">
+        <h3>
+          <mat-icon>credit_card</mat-icon>
+          Créditos de {{ selectedClient.firstName }} {{ selectedClient.lastName }}
+        </h3>
+        <mat-list>
+          <mat-list-item *ngFor="let loan of loans" (click)="selectCredit(loan)">
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+              <span><strong>Código:</strong> {{ loan.loanCode }}</span>
+              <span><strong>Monto:</strong> {{ loan.amount | currency }}</span>
+              <span>
+                <strong>Estado:</strong>
+                <span class="status" [ngClass]="getStatusClass(loan.status)">
+                  {{ loan.status }}
+                </span>
+              </span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+<!-- Detalles del Crédito Seleccionado -->
+<div *ngIf="selectedLoan" class="credit-details">
+  <h3>
+    <mat-icon>credit_card</mat-icon>
+    Detalles del Crédito: {{ selectedLoan.loanCode }}
+  </h3>
+
+  <!-- Contenedor en cuadrícula para los datos -->
+  <div class="loan-details-grid">
+    <!-- Fila 1: Capital e Interés Original -->
+    <div class="detail-item">
+      <span class="label">Capital Original:</span>
+      <span class="value">{{ selectedLoan.amount | currency }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Interés Original:</span>
+      <span class="value">{{ selectedLoan.interestAmount | currency }}</span>
+    </div>
+
+    <!-- Fila 2: Capital Pagado e Interés Pagado -->
+    <div class="detail-item">
+      <span class="label">Capital Pagado:</span>
+      <span class="value">{{ selectedLoan.capitalPaid | currency }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Interés Pagado:</span>
+      <span class="value">{{ selectedLoan.interestPaid | currency }}</span>
+    </div>
+
+    <!-- Fila 3: Capital e Interés Pendiente -->
+    <div class="detail-item">
+      <span class="label">Capital Pendiente:</span>
+      <span class="value">{{ selectedLoan.remainingCapital | currency }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Interés Pendiente:</span>
+      <span class="value">{{ selectedLoan.remainingInterest | currency }}</span>
+    </div>
+
+    <!-- Fila 4: Deuda Pendiente y Estado -->
+    <div class="detail-item">
+      <span class="label">Deuda Pendiente:</span>
+      <span class="value">{{ selectedLoan.totalAmount | currency }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Estado:</span>
+      <span class="status" [ngClass]="getStatusClass(selectedLoan.status)">
+        {{ selectedLoan.status }}
+      </span>
+    </div>
+
+    <!-- Fila 5: Fecha de Vencimiento -->
+    <div class="detail-item" style="grid-column: span 2;">
+      <span class="label">Fecha de Vencimiento:</span>
+      <span class="value">{{ selectedLoan.dueDate | date }}</span>
+    </div>
+  </div>
+
+  <!-- Botón de Pagar alineado a la derecha -->
+  <div class="actions-container">
+    <button mat-raised-button color="primary" (click)="openPaymentModal()">
+      <mat-icon>payment</mat-icon>
+      Pagar
+    </button>
+  </div>
+</div>
+
+
+      <!-- Mensaje si no se encuentran clientes -->
+      <div *ngIf="clients.length === 0 && searchQuery && backendResponseReceived">
+        <mat-card class="error-message">
+          <mat-icon>error</mat-icon>
+          <span>No se encontraron clientes que coincidan con "{{ searchQuery }}".</span>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
