@@ -5,7 +5,7 @@ import { Client } from '../models/client.model';
 import { Credit } from '../models/credit.model';
 import { Loan } from '../models/loan.model';
 import { Installment } from '../models/installment.model';
-import { PaymentDTO } from '../DTO/PaymentDTO';// Asegúrate de tener este modelo definido
+import { PaymentDTO } from '../DTO/payment-dto';// Asegúrate de tener este modelo definido
 
 @Injectable({
   providedIn: 'root',

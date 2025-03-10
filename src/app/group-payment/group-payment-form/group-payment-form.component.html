@@ -1,0 +1,78 @@
+<mat-card>
+  <mat-card-title>
+    <mat-icon>payment</mat-icon>
+    Crear/Editar Pago Grupal
+  </mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="groupPaymentForm" (ngSubmit)="onSubmit()">
+      <!-- Tipo de Servicio -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tipo de Servicio</mat-label>
+        <input matInput formControlName="serviceType" placeholder="Ej: LUZ, AGUA, NETFLIX">
+        <mat-icon matSuffix>category</mat-icon>
+      </mat-form-field>
+
+      <!-- Descripción -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" placeholder="Descripción del servicio"></textarea>
+        <mat-icon matSuffix>description</mat-icon>
+      </mat-form-field>
+
+      <!-- Monto Total -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Monto Total</mat-label>
+        <input matInput type="number" formControlName="totalAmount" placeholder="Monto total del servicio">
+        <mat-icon matSuffix>attach_money</mat-icon>
+      </mat-form-field>
+
+      <!-- Fecha de Pago -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fecha de Pago</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="paymentDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-icon matSuffix>calendar_today</mat-icon>
+      </mat-form-field>
+
+      <!-- Método de Pago -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Método de Pago</mat-label>
+        <mat-select formControlName="paymentMethod">
+          <mat-option *ngFor="let method of paymentMethods" [value]="method">
+            <mat-icon *ngIf="method === 'EFECTIVO'">money</mat-icon>
+            <mat-icon *ngIf="method === 'TRANSFERENCIA'">account_balance</mat-icon>
+            <mat-icon *ngIf="method === 'PLIN'">smartphone</mat-icon>
+            <mat-icon *ngIf="method === 'YAPE'">smartphone</mat-icon>
+            <mat-icon *ngIf="method === 'TARJETA'">credit_card</mat-icon>
+            {{ method }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>payment</mat-icon>
+      </mat-form-field>
+
+      <!-- Estado -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Estado</mat-label>
+        <input matInput formControlName="status" readonly>
+        <mat-icon matSuffix>lock</mat-icon>
+      </mat-form-field>
+
+      <!-- Campo para el Pagador -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Pagador</mat-label>
+        <!-- Campo de solo lectura para mostrar el nombre completo -->
+        <input matInput formControlName="payerName" placeholder="Seleccione cliente" readonly>
+        <!-- Botón para abrir el modal de búsqueda -->
+        <button mat-icon-button matSuffix color="primary" (click)="openClientSearchModal()" type="button">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Botón de Guardar -->
+      <button mat-raised-button color="primary" type="submit">
+        <mat-icon>save</mat-icon> Guardar
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,63 +1,86 @@
 import { Routes } from '@angular/router';
+
+// Componentes sin layout
 import { LoginComponent } from './auth/login/login.component';
+
+// Layout principal
+import { LayoutComponent } from './core/layaout/layout/layout.component';
+
+// Dashboard
 import { DashboardComponent } from './dashboard/dashboard.component';
+
+// Usuarios
 import { UserListComponent } from './users/user-list/user-list.component';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { UserCreateComponent } from './users/user-create/user-create.component';
+
+// Clientes
 import { ClientListComponent } from './client/client-list/client-list.component';
 import { ClientCreateComponent } from './client/client-create/client-create.component';
 
-// Componentes para préstamos
-import { LoanListComponent } from './loan/loan-list/loan-list.component';  // Lista de préstamos
-import { LoanCreateComponent } from './loan/loan-create/loan-create.component';  // Crear préstamo
-import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';  // Editar préstamo
+// Préstamos
+import { LoanListComponent } from './loan/loan-list/loan-list.component';
+import { LoanCreateComponent } from './loan/loan-create/loan-create.component';
+import { LoanEditComponent } from './loan/loan-edit/loan-edit.component';
 
-// Componentes para créditos
-import { CreditListComponent } from './credit/credit-list/credit-list.component';  // Lista de créditos
-import { CreateCreditComponent } from './credit/create-credit/create-credit.component';  // Crear crédito
-//import { EditCreditComponent } from './credit/edit-credit/edit-credit.component';  // Editar crédito
+// Créditos
+import { CreditListComponent } from './credit/credit-list/credit-list.component';
+import { CreateCreditComponent } from './credit/create-credit/create-credit.component';
+// import { EditCreditComponent } from './credit/edit-credit/edit-credit.component'; // si lo necesitas
 
-// Componente de layout
-import { LayoutComponent } from './core/layaout/layout/layout.component';
+// Pagos
+import { PaymentListComponent } from './payments/payment-list.component';
+import { SinglePaymentComponent } from './single-payment/single-payment.component';
+// import { PaymentDetailComponent } from './payments/payment-detail/payment-detail.component'; // si lo necesitas
 
-// Componentes para pagos
-import { PaymentListComponent } from './payments/payment-list.component'; // Lista de pagos
-import { SinglePaymentComponent } from './single-payment/single-payment.component';// Pago de crédito de una sola cuota
-//import { PaymentDetailComponent } from './payments/payment-detail/payment-detail.component';  // Detalle de pago
-
+// Pagos Grupales
+import { GroupPaymentListComponent } from './group-payment/group-payment-list/group-payment-list.component';
+import { GroupPaymentFormComponent } from './group-payment/group-payment-form/group-payment-form.component';
+import { GroupPaymentDetailComponent } from './group-payment/group-payment-detail/group-payment-detail.component';
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent }, // Ruta sin layout
+  // Ruta sin layout
+  { path: 'login', component: LoginComponent },
 
+  // Ruta principal con layout
   {
-    path: '', // Ruta principal que usa el layout
+    path: '',
     component: LayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent }, // Ruta hija con layout
+      // Dashboard
+      { path: 'dashboard', component: DashboardComponent },
 
-      // Rutas para usuarios
-      { path: 'list-user', component: UserListComponent }, // Lista de usuarios
-      { path: 'create-user', component: UserCreateComponent }, // Crear usuario
-      { path: 'edit-user/:id', component: UserEditComponent }, // Editar usuario
+      // Usuarios
+      { path: 'list-user', component: UserListComponent },
+      { path: 'create-user', component: UserCreateComponent },
+      { path: 'edit-user/:id', component: UserEditComponent },
 
-      // Rutas para clientes
-      { path: 'list-client', component: ClientListComponent }, // Lista de clientes
-      { path: 'create-client', component: ClientCreateComponent }, // Crear cliente
-      { path: 'edit-client/:id', component: ClientCreateComponent }, // Editar cliente
+      // Clientes
+      { path: 'list-client', component: ClientListComponent },
+      { path: 'create-client', component: ClientCreateComponent },
+      { path: 'edit-client/:id', component: ClientCreateComponent },
 
-      // Rutas para préstamos
-      { path: 'loans', component: LoanListComponent }, // Lista de préstamos
-      { path: 'create-loan', component: LoanCreateComponent }, // Crear préstamo
-      { path: 'edit-loan/:id', component: LoanEditComponent }, // Editar préstamo
+      // Préstamos
+      { path: 'loans', component: LoanListComponent },
+      { path: 'create-loan', component: LoanCreateComponent },
+      { path: 'edit-loan/:id', component: LoanEditComponent },
 
-      // Rutas para créditos
-      { path: 'credits', component: CreditListComponent }, // Lista de créditos
-      { path: 'create-credit', component: CreateCreditComponent }, // Crear crédito
-      //{ path: 'edit-credit/:id', component: EditCreditComponent }, // Editar crédito
+      // Créditos
+      { path: 'credits', component: CreditListComponent },
+      { path: 'create-credit', component: CreateCreditComponent },
+      // { path: 'edit-credit/:id', component: EditCreditComponent },
 
-      // Rutas para pagos
-      { path: 'payments', component: PaymentListComponent }, // Lista de pagos
-      { path: 'single-payment', component: SinglePaymentComponent }, // Pago de crédito de una sola cuota
-      //{ path: 'payment-detail/:id', component: PaymentDetailComponent }, // Detalle de pago
+      // Pagos
+      { path: 'payments', component: PaymentListComponent },
+      { path: 'single-payment', component: SinglePaymentComponent },
+      // { path: 'payment-detail/:id', component: PaymentDetailComponent },
+
+      // Pagos Grupales
+      { path: 'group-payments', component: GroupPaymentListComponent },
+      { path: 'group-payments/detail/:id', component: GroupPaymentDetailComponent }, // Ruta para ver detalles
+      { path: 'create-group-payment', component: GroupPaymentFormComponent },       // Crear pago grupal
+      { path: 'edit-group-payment/:id', component: GroupPaymentFormComponent },     // Editar pago grupal
+      { path: 'group-payments/detail/:id', component: GroupPaymentDetailComponent },
+
 
       // Redirige a dashboard por defecto
       { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

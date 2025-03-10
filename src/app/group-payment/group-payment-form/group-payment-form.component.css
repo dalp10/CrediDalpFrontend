@@ -1,0 +1,64 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+mat-card {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+button[mat-raised-button] {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+}
+
+mat-icon {
+  color: #3f51b5;
+}
+
+mat-datepicker-toggle {
+  color: #3f51b5;
+}
+
+mat-select {
+  display: flex;
+  align-items: center;
+}
+
+mat-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 0;
+}

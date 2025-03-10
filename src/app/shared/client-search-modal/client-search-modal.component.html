@@ -1,59 +1,67 @@
-<h2 mat-dialog-title>Buscar Cliente</h2>
-<mat-dialog-content>
-  <!-- Campo de búsqueda -->
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Buscar cliente</mat-label>
-    <input matInput [(ngModel)]="searchText" (input)="filterClients()" placeholder="Nombre, apellido, email o documento" />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
+<mat-card>
+  <mat-card-title>
+    <mat-icon>search</mat-icon>
+    Buscar Cliente
+  </mat-card-title>
+  <mat-card-content>
+    <!-- Campo de búsqueda -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Buscar por nombre, email o documento</mat-label>
+      <input matInput [(ngModel)]="searchText" (ngModelChange)="filterClients()" placeholder="Ingrese término de búsqueda">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    
+    <!-- Tabla de clientes filtrados -->
+    <table mat-table [dataSource]="filteredClients" class="mat-elevation-z8">
+      
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let client"> {{ client.id }} </td>
+      </ng-container>
 
-  <!-- Tabla de clientes -->
-  <table mat-table [dataSource]="filteredClients" class="mat-elevation-z8">
-    <!-- Columna ID -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef>ID</th>
-      <td mat-cell *matCellDef="let client">{{ client.id }}</td>
-    </ng-container>
-
-    <!-- Columna Nombre -->
-    <ng-container matColumnDef="firstName">
-      <th mat-header-cell *matHeaderCellDef>Nombre</th>
-      <td mat-cell *matCellDef="let client">{{ client.firstName }}</td>
-    </ng-container>
-
-    <!-- Columna Apellido -->
-    <ng-container matColumnDef="lastName">
-      <th mat-header-cell *matHeaderCellDef>Apellido</th>
-      <td mat-cell *matCellDef="let client">{{ client.lastName }}</td>
-    </ng-container>
-
-    <!-- Columna Email -->
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let client">{{ client.email }}</td>
-    </ng-container>
-
-    <!-- Columna Documento -->
-    <ng-container matColumnDef="documentNumber">
-      <th mat-header-cell *matHeaderCellDef>Documento</th>
-      <td mat-cell *matCellDef="let client">{{ client.documentNumber }}</td>
-    </ng-container>
-
-    <!-- Columna Seleccionar -->
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
-      <td mat-cell *matCellDef="let client">
-        <button mat-raised-button color="primary" (click)="selectClient(client)">
-          Seleccionar
-        </button>
-      </td>
-    </ng-container>
-
-    <!-- Filas -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-</mat-dialog-actions>
+      <!-- Nombre -->
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let client"> {{ client.firstName }} </td>
+      </ng-container>
+      
+      <!-- Apellido -->
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef> Apellido </th>
+        <td mat-cell *matCellDef="let client"> {{ client.lastName }} </td>
+      </ng-container>
+      
+      <!-- Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let client"> {{ client.email }} </td>
+      </ng-container>
+      
+      <!-- Documento -->
+      <ng-container matColumnDef="documentNumber">
+        <th mat-header-cell *matHeaderCellDef> Documento </th>
+        <td mat-cell *matCellDef="let client"> {{ client.documentNumber }} </td>
+      </ng-container>
+      
+      <!-- Acción de seleccionar -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let client">
+          <button mat-icon-button color="primary" (click)="selectClient(client)">
+            <mat-icon>check_circle</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="warn" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+      Cancelar
+    </button>
+  </mat-card-actions>
+</mat-card>

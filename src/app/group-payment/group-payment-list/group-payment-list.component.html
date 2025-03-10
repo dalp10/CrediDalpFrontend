@@ -1,0 +1,84 @@
+<mat-card>
+  <mat-card-title>
+    <mat-icon>payments</mat-icon> Pagos Grupales
+  </mat-card-title>
+  <mat-card-content>
+    <table mat-table [dataSource]="groupPayments" class="mat-elevation-z8">
+      <!-- Identificador del pago -->
+      <ng-container matColumnDef="paymentIdentifier">
+        <th mat-header-cell *matHeaderCellDef> Identificador </th>
+        <td mat-cell *matCellDef="let payment">
+          {{ payment.paymentIdentifier }}
+        </td>
+      </ng-container>
+
+      <!-- Tipo de servicio -->
+      <ng-container matColumnDef="serviceType">
+        <th mat-header-cell *matHeaderCellDef> Servicio </th>
+        <td mat-cell *matCellDef="let payment">
+          {{ payment.serviceType }}
+        </td>
+      </ng-container>
+
+      <!-- Monto Total -->
+      <ng-container matColumnDef="totalAmount">
+        <th mat-header-cell *matHeaderCellDef> Monto </th>
+        <td mat-cell *matCellDef="let payment" class="total-amount">
+          {{ payment.totalAmount | currency }}
+        </td>
+      </ng-container>
+
+      <!-- Fecha de pago -->
+      <ng-container matColumnDef="paymentDate">
+        <th mat-header-cell *matHeaderCellDef> Fecha </th>
+        <td mat-cell *matCellDef="let payment" class="payment-date">
+          {{ payment.paymentDate | date:'short' }}
+        </td>
+      </ng-container>
+
+      <!-- Método de pago -->
+      <ng-container matColumnDef="paymentMethod">
+        <th mat-header-cell *matHeaderCellDef> Medio </th>
+        <td mat-cell *matCellDef="let payment">
+          <mat-icon *ngIf="payment.paymentMethod === 'EFECTIVO'">money</mat-icon>
+          <mat-icon *ngIf="payment.paymentMethod === 'TRANSFERENCIA'">account_balance</mat-icon>
+          <mat-icon *ngIf="payment.paymentMethod === 'PLIN'">smartphone</mat-icon>
+          <mat-icon *ngIf="payment.paymentMethod === 'YAPE'">smartphone</mat-icon>
+          <mat-icon *ngIf="payment.paymentMethod === 'TARJETA'">credit_card</mat-icon>
+          {{ payment.paymentMethod }}
+        </td>
+      </ng-container>
+
+      <!-- Estado -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let payment">
+          <mat-icon class="status-icon" *ngIf="payment.status === 'PENDING'">schedule</mat-icon>
+          <mat-icon class="status-icon" *ngIf="payment.status === 'PAID'">check_circle</mat-icon>
+          {{ payment.status }}
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let payment">
+          <!-- Botón "Ver" -->
+          <button mat-icon-button color="primary" (click)="viewDetails(payment)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <!-- Botón "Editar" -->
+          <button mat-icon-button color="accent" (click)="editPayment(payment)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Paginador -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,177 @@
+<mat-card *ngIf="payment">
+  <mat-card-title>
+    <mat-icon>payment</mat-icon>
+    Detalle de Pago Grupal: {{ payment.serviceType }} (ID: {{ payment.id }})
+  </mat-card-title>
+  <mat-card-content>
+
+    <!-- Sección de información general del pago -->
+    <div class="payment-info-grid">
+      <div class="payment-info-item">
+        <strong>Monto Total:</strong>
+        <span class="total-amount">{{ payment.totalAmount | currency }}</span>
+      </div>
+      <div class="payment-info-item">
+        <strong>Fecha de Pago:</strong>
+        <span class="payment-date">{{ payment.paymentDate | date:'short' }}</span>
+      </div>
+      <div class="payment-info-item">
+        <strong>Método de Pago:</strong>
+        <span class="payment-method">
+          <mat-icon class="payment-method-icon" *ngIf="payment.paymentMethod === 'EFECTIVO'">money</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="payment.paymentMethod === 'TRANSFERENCIA'">account_balance</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="payment.paymentMethod === 'PLIN'">smartphone</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="payment.paymentMethod === 'YAPE'">smartphone</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="payment.paymentMethod === 'TARJETA'">credit_card</mat-icon>
+          {{ payment.paymentMethod }}
+        </span>
+      </div>
+      <div class="payment-info-item">
+        <strong>Estado:</strong>
+        <span class="payment-status">{{ payment.status }}</span>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Sección de contribuciones -->
+    <h3>Contribuciones</h3>
+    <table mat-table [dataSource]="payment.contributions" class="mat-elevation-z8">
+      
+      <!-- CLIENTE ID -->
+      <ng-container matColumnDef="clientId">
+        <th mat-header-cell *matHeaderCellDef>Cliente ID</th>
+        <td mat-cell *matCellDef="let c">{{ c.clientId }}</td>
+      </ng-container>
+
+      <!-- NOMBRE DEL CLIENTE -->
+      <ng-container matColumnDef="clientName">
+        <th mat-header-cell *matHeaderCellDef>Nombre del Cliente</th>
+        <td mat-cell *matCellDef="let c">{{ getClientName(c.clientId) }}</td>
+      </ng-container>
+
+      <!-- MONTO -->
+      <ng-container matColumnDef="amountPaid">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let c">{{ c.amountPaid | currency }}</td>
+      </ng-container>
+
+      <!-- FECHA -->
+      <ng-container matColumnDef="contributionDate">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let c">{{ c.contributionDate | date:'short' }}</td>
+      </ng-container>
+
+      <!-- MÉTODO -->
+      <ng-container matColumnDef="paymentMethod">
+        <th mat-header-cell *matHeaderCellDef>Método</th>
+        <td mat-cell *matCellDef="let c">
+          <mat-icon class="payment-method-icon" *ngIf="c.paymentMethod === 'EFECTIVO'">money</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="c.paymentMethod === 'TRANSFERENCIA'">account_balance</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="c.paymentMethod === 'PLIN'">smartphone</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="c.paymentMethod === 'YAPE'">smartphone</mat-icon>
+          <mat-icon class="payment-method-icon" *ngIf="c.paymentMethod === 'TARJETA'">credit_card</mat-icon>
+          {{ c.paymentMethod }}
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA DE ACCIONES (Eliminar) -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let c; let i = index">
+          <button mat-icon-button color="warn" (click)="removeContribution(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['clientId', 'clientName', 'amountPaid', 'contributionDate', 'paymentMethod', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['clientId', 'clientName', 'amountPaid', 'contributionDate', 'paymentMethod', 'actions'];"></tr>
+    </table>
+
+    <hr>
+
+    <!-- Sección para agregar una nueva contribución -->
+    <h3>Agregar Nueva Contribución</h3>
+    <form [formGroup]="newContributionForm" class="new-contribution-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="client-field">
+          <mat-label>Cliente</mat-label>
+          <input matInput formControlName="clientName" readonly>
+          <button mat-icon-button matSuffix color="primary" (click)="openClientSearchModal()" type="button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+        <input type="hidden" formControlName="clientId">
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Monto</mat-label>
+          <input matInput type="number" formControlName="amountPaid">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha Contribución</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="contributionDate">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Método</mat-label>
+          <mat-select formControlName="paymentMethod">
+            <mat-option *ngFor="let method of paymentMethods" [value]="method">
+              {{ method }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" (click)="addContribution()">
+          <mat-icon>add</mat-icon> Agregar
+        </button>
+      </div>
+    </form>
+
+    <hr>
+
+    <!-- Sección de acciones -->
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="saveChanges()">
+        <mat-icon>save</mat-icon> Guardar Cambios
+      </button>
+      <button mat-raised-button color="warn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Volver
+      </button>
+      <button mat-raised-button color="accent" (click)="printPaymentDetails()">
+        <mat-icon>print</mat-icon> Imprimir
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
+<!-- Modal de confirmación -->
+<ng-template #confirmationModal>
+  <h2 mat-dialog-title>Confirmación</h2>
+  <mat-dialog-content>
+    ¿Estás seguro de que deseas guardar los cambios?
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onClose()">Cancelar</button>
+    <button mat-button color="primary" (click)="saveChanges()">Confirmar</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Modal de respuesta -->
+<ng-template #responseModal>
+  <h2 mat-dialog-title>Respuesta</h2>
+  <mat-dialog-content>
+    {{ responseMessage }}
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onClose()">Cerrar</button>
+  </mat-dialog-actions>
+</ng-template>
