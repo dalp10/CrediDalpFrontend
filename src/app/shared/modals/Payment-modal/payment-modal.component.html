@@ -7,8 +7,16 @@
     <!-- Mostrar el monto total de la cuota -->
     <div class="payment-amount">
       <mat-icon>attach_money</mat-icon>
-      <span>Monto Total de la Cuota: {{ data.installment.amount | currency }}</span>
+      <span>
+        Monto Pendiente de la Cuota: 
+        {{
+          ((data.installment.interestAmount - data.installment.interestPaid) +
+           (data.installment.capitalAmount - data.installment.capitalPaid))
+           | number:'1.2-2'
+        | currency }}
+      </span>
     </div>
+    
 
     <!-- Campo para ingresar el monto a pagar -->
     <mat-form-field appearance="outline" class="full-width">

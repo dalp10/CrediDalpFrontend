@@ -41,15 +41,24 @@ export class PaymentModalComponent {
     private paymentService: PaymentService, // Inyecta el servicio de pagos
     private snackBar: MatSnackBar // Inyecta el servicio de notificaciones
   ) {
+    // Calcular el interés y capital pendiente
+    const interestDue = Number(data.installment.interestAmount) - Number(data.installment.interestPaid);
+    const capitalDue = Number(data.installment.capitalAmount) - Number(data.installment.capitalPaid);
+    // Sumar ambos y redondear a dos decimales
+    const totalDue = interestDue + capitalDue;
+    const totalDueRounded = Number(totalDue.toFixed(2));
+  
     this.paymentForm = this.fb.group({
       amountToPay: [
-        data.installment.amount, // Valor inicial: monto total de la cuota
-        [Validators.required, Validators.max(data.installment.amount)], // Validación: no puede ser mayor que el monto total
+        totalDueRounded, // Valor inicial: monto pendiente redondeado
+        [Validators.required, Validators.max(totalDueRounded)] // Validación: no puede ser mayor que el total pendiente redondeado
       ],
       paymentMethod: ['', Validators.required],
       paymentDate: [new Date(), Validators.required],
     });
   }
+  
+  
 
   // Validar el monto ingresado
   validateAmount(): void {
@@ -68,43 +77,50 @@ export class PaymentModalComponent {
   onSubmit(): void {
     if (this.paymentForm.valid) {
       const amountToPay = this.paymentForm.value.amountToPay;
-      const totalAmount = this.data.installment.amount;
-  
-      // Verifica que los valores sean números válidos
-      if (isNaN(this.data.installment.capitalAmount)) {
-        console.error('capitalAmount no es un número válido');
-        return;
+      // Se asume que la cuota (data.installment) tiene los siguientes campos:
+      // interestAmount, interestPaid, capitalAmount, capitalPaid
+      // O alternativamente, campos calculados: interestRemaining y capitalRemaining.
+      // Si no se reciben, se calculan:
+      const interestDue = this.data.installment.interestAmount - this.data.installment.interestPaid;
+      const capitalDue = this.data.installment.capitalAmount - this.data.installment.capitalPaid;
+      
+      let interestToPay: number;
+      let capitalToPay: number;
+      
+      // Primero, se paga el interés pendiente
+      if (amountToPay <= interestDue) {
+        interestToPay = amountToPay;
+        capitalToPay = 0;
+      } else {
+        interestToPay = interestDue;
+        capitalToPay = amountToPay - interestDue;
+        // Si el pago excede el total pendiente (interés + capital), se puede limitar:
+        const totalDue = interestDue + capitalDue;
+        if (amountToPay > totalDue) {
+          interestToPay = interestDue;
+          capitalToPay = capitalDue;
+        }
       }
-      if (isNaN(this.data.installment.interestAmount)) {
-        console.error('interestAmount no es un número válido');
-        return;
-      }
-  
-      // Calcular el capital y el interés pagado
-      const capitalPaid = (this.data.installment.capitalAmount / totalAmount) * amountToPay;
-      const interestPaid = (this.data.installment.interestAmount / totalAmount) * amountToPay;
-  
+      
+      // Preparar el objeto de datos para enviar al backend
       const paymentData = {
         installmentId: this.data.installment.id, // ID de la cuota
-        amount: amountToPay, // Monto a pagar
-        paymentMethod: this.paymentForm.value.paymentMethod, // Método de pago
-        paymentDate: this.paymentForm.value.paymentDate, // Fecha de pago
-        capitalPaid: capitalPaid, // Capital pagado
-        interestPaid: interestPaid, // Interés pagado
+        amount: amountToPay, // Monto ingresado
+        paymentMethod: this.paymentForm.value.paymentMethod,
+        paymentDate: this.paymentForm.value.paymentDate,
+        capitalPaid: capitalToPay, // Capital que se abonará
+        interestPaid: interestToPay, // Interés que se abonará
         totalPaid: amountToPay // Monto total pagado
       };
   
-      // Llama al servicio para realizar el pago
       this.paymentService.payInstallment(paymentData).subscribe(
         (response) => {
-          // Muestra un mensaje de éxito
           this.snackBar.open('Pago realizado con éxito', 'Cerrar', {
             duration: 3000,
           });
-          this.dialogRef.close(response); // Cierra el modal y devuelve la respuesta
+          this.dialogRef.close(response);
         },
         (error) => {
-          // Muestra un mensaje de error
           this.snackBar.open('Error al realizar el pago', 'Cerrar', {
             duration: 3000,
           });
@@ -113,4 +129,5 @@ export class PaymentModalComponent {
       );
     }
   }
+  
 }

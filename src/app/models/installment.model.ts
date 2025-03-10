@@ -12,5 +12,6 @@ export interface Installment {
   export enum InstallmentStatus {
     PENDING = 'PENDING',
     PAID = 'PAID',
-    OVERDUE = 'OVERDUE'
+    OVERDUE = 'OVERDUE',
+    PARTIALLY_PAID ='PARTIALLY_PAID'
   }

@@ -131,20 +131,40 @@ showNoResultsMessage(type: 'client' | 'credit'): void {
   selectCredit(credit: Credit): void {
     this.selectedCredit = credit;
     this.paymentService.getInstallmentsByCredit(credit.id!).subscribe((data) => {
-      // Filtrar cuotas pendientes o vencidas
-      this.installments = data
-        .filter(installment => installment.status === 'PENDING' || installment.status === 'OVERDUE')
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()); // Ordenar por fecha de vencimiento
-  
-      console.log("Cuotas filtradas y ordenadas:", this.installments);
+      // Para mostrar todas las cuotas, sin filtrar por estado:
+      this.installments = data.sort((a, b) =>
+        new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      );
+      
+      // Si prefieres filtrar pero incluir PAID, podrías hacer:
+      // this.installments = data.filter(installment =>
+      //   installment.status === 'PENDING' ||
+      //   installment.status === 'OVERDUE' ||
+      //   installment.status === 'PARTIALLY_PAID' ||
+      //   installment.status === 'PAID'
+      // ).sort((a, b) =>
+      //   new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      // );
+      
+      console.log("Cuotas actualizadas:", this.installments);
+      this.cdr.detectChanges();
     });
   }
   
+  
   // Método para verificar si una cuota es la más antigua
-  isOldestInstallment(installment: Installment): boolean {
-    if (this.installments.length === 0) return false;
-    const oldestInstallment = this.installments[0]; // La primera cuota es la más antigua
-    return installment.id === oldestInstallment.id;
+  isOldestUnpaidInstallment(installment: Installment): boolean {
+    // Filtrar solo las cuotas que aún no están pagadas
+    const unpaidInstallments = this.installments.filter(inst => inst.status !== 'PAID');
+    
+    // Si no hay cuotas pendientes, se retorna false
+    if (unpaidInstallments.length === 0) {
+      return false;
+    }
+    
+    // Asumiendo que 'this.installments' ya está ordenada por fecha de vencimiento,
+    // la cuota pendiente más antigua será la primera en 'unpaidInstallments'
+    return installment.id === unpaidInstallments[0].id;
   }
   
   
@@ -152,61 +172,20 @@ showNoResultsMessage(type: 'client' | 'credit'): void {
 
     // Realizar un pago
     payInstallment(installment: Installment): void {
-
-      // Abrir el modal de pago
       const dialogRef = this.dialog.open(PaymentModalComponent, {
-        data: { installment }, // Pasa la cuota seleccionada
+        data: { installment },
       });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const paymentData = {
-          amountToPay: result.amountToPay, // Monto ingresado por el usuario
-          paymentMethod: result.paymentMethod,
-          paymentDate: result.paymentDate,
-        };
-
-        // Formatea el monto usando formatCurrency
-        const formattedAmount = formatCurrency(
-          paymentData.amountToPay, // Monto a formatear
-          'es-PE', // Locale (es-PE para Perú, ajusta según tu región)
-          'S/', // Símbolo de moneda (S/ para soles, $ para dólares, etc.)
-          'symbol', // Formato de moneda
-          '1.2-2' // Dígitos mínimos y máximos
-        );
-
-        // Abrir el modal de confirmación
-        const confirmDialogRef = this.dialog.open(ConfirmationModalComponent, {
-          data: {
-            message: `¿Estás seguro de pagar ${formattedAmount}?`, // Usa el monto formateado
-            amount: paymentData.amountToPay,
-          },
-        });
-
-        confirmDialogRef.afterClosed().subscribe((confirmed) => {
-          if (confirmed) {
-            // Si el usuario confirma, realiza el pago
-            this.paymentService
-              .payInstallment(paymentData)
-              .subscribe(
-                (response) => {
-                  this.selectCredit(this.selectedCredit!); // Refrescar la lista de cuotas
-                  // Abrir el modal de respuesta exitosa
-                  this.dialog.open(ResponseModalComponent, {
-                    data: { message: 'Pago realizado con éxito.' },
-                  });
-                },
-                (error) => {
-                  // Abrir el modal de respuesta de error
-                  this.dialog.open(ResponseModalComponent, {
-                    data: { message: 'Error al realizar el pago.' },
-                  });
-                }
-              );
-          }
-        });
-      }
-    });
-  }
+    
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          // Solo actualiza la lista de cuotas y muestra el mensaje de respuesta
+          this.selectCredit(this.selectedCredit!);
+          this.dialog.open(ResponseModalComponent, {
+            data: { message: 'Pago realizado con éxito.' },
+          });
+        }
+      });
+    }
+    
   
 }

@@ -17,6 +17,7 @@ import { CreditStatus } from '../../models/credit.model';
 import { PaymentScheduleModalComponent } from '../../shared/payment-schedule-modal/payment-schedule-modal.component';
 import { formatDate } from '@angular/common';
 import { ClientService } from '../../services/client.service'; // Servicio para obtener clientes
+import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-create-credit',
@@ -100,13 +101,15 @@ export class CreateCreditComponent implements OnInit {
     const dialogRef = this.dialog.open(ClientSearchModalComponent, {
       width: '600px',
     });
-
-    dialogRef.afterClosed().subscribe((clientId: number) => {
-      if (clientId) {
-        this.creditForm.get('clientId')?.setValue(clientId);
+  
+    dialogRef.afterClosed().subscribe((selectedClient: Client) => {
+      if (selectedClient) {
+        this.creditForm.get('clientId')?.setValue(selectedClient.id); // Asigna solo el ID del cliente
+        // También puedes asignar otros valores del cliente si es necesario, por ejemplo, el nombre
       }
     });
   }
+  
 
   // Función formatDate actualizada para aceptar un formato personalizado
   private formatDate(date: Date | string | null | undefined, format: string = 'yyyy-MM-dd'): string {
