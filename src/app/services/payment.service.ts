@@ -5,55 +5,65 @@ import { Client } from '../models/client.model';
 import { Credit } from '../models/credit.model';
 import { Loan } from '../models/loan.model';
 import { Installment } from '../models/installment.model';
-import { PaymentDTO } from '../DTO/payment-dto';// Asegúrate de tener este modelo definido
+import { PaymentLoanDTO, PaymentCreditDTO } from '../DTO/payment-dto';
+import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
 
 @Injectable({
   providedIn: 'root',
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8080/api'; // URL del backend
+  private apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
-  // Buscar cliente por documento o nombre
-  searchClients(query: string): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.apiUrl}/clients/search?query=${query}`);
+  // Buscar cliente por nombre o documento
+  searchClients(query: string): Observable<CustomApiResponse<Client[]>> {
+    return this.http.get<CustomApiResponse<Client[]>>(`${this.apiUrl}/clients/search?query=${query}`);
   }
 
-  // Buscar crédito por código
-  searchCredits(query: string): Observable<Credit[]> {
-    return this.http.get<Credit[]>(`${this.apiUrl}/credits/search?query=${query}`);
-  }
-
-  // Obtener créditos de un cliente
-  getCreditsByClient(clientId: number): Observable<Credit[]> {
-    return this.http.get<Credit[]>(`${this.apiUrl}/credits/client/${clientId}`);
+  // Buscar créditos por código
+  searchCredits(query: string): Observable<CustomApiResponse<Credit[]>> {
+    return this.http.get<CustomApiResponse<Credit[]>>(`${this.apiUrl}/credits/search?query=${query}`);
   }
 
   // Obtener créditos de un cliente
-  getLoansByClient(clientId: number): Observable<Loan[]> {
-    return this.http.get<Loan[]>(`${this.apiUrl}/loans/client/${clientId}`);
+  getCreditsByClient(clientId: number): Observable<CustomApiResponse<Credit[]>> {
+    return this.http.get<CustomApiResponse<Credit[]>>(`${this.apiUrl}/credits/client/${clientId}`);
   }
 
+  // Obtener préstamos de un cliente
+  getLoansByClient(clientId: number): Observable<CustomApiResponse<Loan[]>> {
+    return this.http.get<CustomApiResponse<Loan[]>>(`${this.apiUrl}/clients/${clientId}/loans`);
+  }
 
   // Obtener cuotas de un crédito
-  getInstallmentsByCredit(creditId: number): Observable<Installment[]> {
-    return this.http.get<Installment[]>(`${this.apiUrl}/credits/${creditId}/installments`);
+  getInstallmentsByCreditId(creditId: number): Observable<CustomApiResponse<Installment[]>> {
+    return this.http.get<CustomApiResponse<Installment[]>>(`${this.apiUrl}/credits/${creditId}/installments`);
   }
 
-  // Realizar un pago sobre una cuota de un préstamo Credit
-  payInstallment(paymentDTO: any): Observable<Installment> {
-    return this.http.post<Installment>(`${this.apiUrl}/payments/pay`, paymentDTO);
+  // Realizar un pago sobre una cuota de un crédito
+  payInstallment(installmentId: number, payment: PaymentCreditDTO): Observable<CustomApiResponse<Installment>> {
+    return this.http.post<CustomApiResponse<Installment>>(
+      `${this.apiUrl}/credits/installments/${installmentId}/pay`,
+      payment
+    );
   }
 
-  // Realizar un pago sobre un préstamo Loan
-  makePayment(loanId: number, payment: PaymentDTO): Observable<string> {
-    return this.http.post(`${this.apiUrl}/payments/${loanId}`, payment, { responseType: 'text' });
+  // Realizar un pago sobre un préstamo
+  makeLoanPayment(loanId: number, payment: PaymentLoanDTO): Observable<CustomApiResponse<PaymentLoanDTO>> {
+    return this.http.post<CustomApiResponse<PaymentLoanDTO>>(
+      `${this.apiUrl}/payments/loans/${loanId}`,
+      payment
+    );
   }
-  
 
   // Obtener los pagos de un préstamo por su ID
-  getPaymentsByLoanId(loanId: number): Observable<PaymentDTO[]> {
-    return this.http.get<PaymentDTO[]>(`${this.apiUrl}/payments?loanId=${loanId}`);
+  getPaymentsByLoanId(loanId: number): Observable<CustomApiResponse<PaymentLoanDTO[]>> {
+    return this.http.get<CustomApiResponse<PaymentLoanDTO[]>>(`${this.apiUrl}/payments/loans/${loanId}`);
+  }
+
+  // Obtener los pagos de un crédito por su ID
+  getPaymentsByCreditId(creditId: number): Observable<CustomApiResponse<PaymentCreditDTO[]>> {
+    return this.http.get<CustomApiResponse<PaymentCreditDTO[]>>(`${this.apiUrl}/payments/credits/${creditId}`);
   }
 }

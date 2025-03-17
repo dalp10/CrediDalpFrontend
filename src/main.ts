@@ -2,10 +2,12 @@
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { provideNativeDateAdapter } from '@angular/material/core'; // Importa provideNativeDateAdapter
+import { registerLocaleData } from '@angular/common';
+import localeEsPe from '@angular/common/locales/es-PE'; // Importa el locale de Perú
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 
@@ -13,6 +15,9 @@ import { routes } from './app/app.routes';
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
+
+// Registra el locale de Perú
+registerLocaleData(localeEsPe);
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -28,5 +33,6 @@ bootstrapApplication(AppComponent, {
     ),
     provideRouter(routes),
     provideNativeDateAdapter(), // Añade provideNativeDateAdapter aquí
+    { provide: LOCALE_ID, useValue: 'es-PE' }, // Configura el locale a es-PE
   ],
 }).catch((err) => console.error(err));

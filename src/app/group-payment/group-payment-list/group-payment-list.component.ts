@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GroupPaymentDTO } from '../../DTO/group-payment-dto';
+import { GroupPaymentDTO } from '../../DTO/group-payment-dto.model';
 import { GroupPaymentService } from '../../services/group-payment.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -8,7 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router'; // Para navegar a otra ruta
-// ...
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+
 
 @Component({
   selector: 'app-group-payment-list',
@@ -49,8 +50,10 @@ export class GroupPaymentListComponent implements OnInit {
 
   loadGroupPayments(): void {
     this.groupPaymentService.getAllGroupPayments().subscribe({
-      next: (data: GroupPaymentDTO[]) => {
-        this.groupPayments = data;
+      next: (response: CustomApiResponse<GroupPaymentDTO[]>) => {
+        this.groupPayments = response.data; // Accede a response.data
+        console.log(response.data);
+        console.log(this.groupPayments);
       },
       error: (err) => {
         console.error('Error al cargar los pagos grupales', err);

@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common'; // Importa CommonModule
 import { MatCardModule } from '@angular/material/card'; // Importa MatCardModule
 import { CreditService } from '../../services/credit.service';
 import { Credit } from '../../models/credit.model';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+
+
 
 @Component({
   selector: 'app-credit-list',
@@ -23,10 +26,11 @@ export class CreditListComponent implements OnInit {
   loadCredits(): void {
     const clientId = 17; // Cambia esto según el cliente que desees cargar
     console.log('Cargando créditos para el cliente:', clientId); // Verifica que se esté llamando este método
+  
     this.creditService.getCreditsByClient(clientId).subscribe({
-      next: (credits) => {
-        console.log('Créditos cargados:', credits); // Verifica los datos recibidos
-        this.credits = credits;
+      next: (response: CustomApiResponse<Credit[]>) => {
+        console.log('Créditos cargados:', response.data); // Verifica los datos recibidos
+        this.credits = response.data; // Accede a response.data
       },
       error: (err) => {
         console.error('Error al cargar créditos:', err); // Verifica si hay errores

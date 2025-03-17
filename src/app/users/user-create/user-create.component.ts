@@ -1,24 +1,38 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { Role } from '../../models/role.model';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime, switchMap } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
+import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUser, faKey, faUserTag, faSave } from '@fortawesome/free-solid-svg-icons';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+
 
 @Component({
   selector: 'app-user-create',
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
 })
 export class UserCreateComponent implements OnInit {
   userForm: FormGroup;
@@ -28,59 +42,66 @@ export class UserCreateComponent implements OnInit {
   backendMessage: string | null = null;
   isSuccess: boolean = false;
 
-  @ViewChild('confirmModal') confirmModal!: TemplateRef<any>;
-  @ViewChild('responseModal') responseModal!: TemplateRef<any>;
-
   constructor(
     private userService: UserService,
     private router: Router,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.userForm = this.fb.group({
-      username: ['', [Validators.required, this.validateUsername]], // Validación personalizada
+      username: ['', [Validators.required, this.validateUsername]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       role: ['', Validators.required],
     });
-
-    library.add(faUser, faKey, faUserTag, faSave); // Agrega los iconos que vas a usar
   }
 
   ngOnInit(): void {
-    this.userService.getRoles().subscribe((roles) => {
-      this.roles = roles;
-      console.log(roles);
-    });
+    this.loadRoles();
+    this.setupUsernameValidation();
+  }
 
+  loadRoles(): void {
+    this.userService.getRoles().subscribe({
+      next: (roles: CustomApiResponse<Role[]>) => {
+        this.roles = roles.data;
+      },
+      error: (err) => {
+        console.error('Error al cargar los roles:', err);
+      },
+    });
+  }
+
+  setupUsernameValidation(): void {
     this.userForm.get('username')?.valueChanges
       .pipe(
         debounceTime(500),
         switchMap((username) => this.userService.checkUsernameExists(username))
       )
-      .subscribe((exists) => {
-        this.userExists = exists;
+      .subscribe({
+        next: (existsResponse: CustomApiResponse<boolean>) => {
+          this.userExists = existsResponse.data;
+        },
+        error: (err) => {
+          console.error('Error al verificar el nombre de usuario:', err);
+        },
       });
   }
 
-
   onSubmit(): void {
-    if (this.userForm.invalid) {
+    if (this.userForm.invalid || this.userExists) {
       this.userForm.markAllAsTouched();
       return;
     }
 
-    if (this.userExists) {
-      alert('¡El nombre de usuario ya está en uso!');
-      return;
-    }
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      data: { message: '¿Estás seguro de que deseas crear este usuario?' },
+    });
 
-    // Abrir el modal de confirmación
-    this.modalService.open(this.confirmModal).result.then((result) => {
-      if (result === 'confirm') {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
         this.createUser();
       }
-    }).catch(() => {
-      console.log('Modal de confirmación descartado');
     });
   }
 
@@ -92,68 +113,56 @@ export class UserCreateComponent implements OnInit {
 
     if (!role) {
       console.error('El rol seleccionado no es válido:', formValue.role);
-      alert('El rol seleccionado no es válido.');
+      this.snackBar.open('El rol seleccionado no es válido.', 'Cerrar', { duration: 3000 });
       this.isLoading = false;
       return;
     }
 
     const newUser = new User(formValue.username, formValue.password, role);
     this.userService.createUser(newUser).subscribe({
-      next: (createdUser) => {
+      next: () => {
         this.isLoading = false;
         this.backendMessage = 'Usuario creado exitosamente';
         this.isSuccess = true;
-        this.openResponseModal();
+        this.showResponseModal();
       },
       error: (error) => {
         this.isLoading = false;
         this.backendMessage = 'Error al crear el usuario: ' + error.message;
         this.isSuccess = false;
-        this.openResponseModal();
+        this.showResponseModal();
       },
     });
   }
 
-  openResponseModal(): void {
-    this.modalService.open(this.responseModal).result.then(() => {
-      if (this.isSuccess) {
-        this.router.navigate(['/list-user']);
-      }
-    }).catch(() => {
+  showResponseModal(): void {
+    const dialogRef = this.dialog.open(ResponseModalComponent, {
+      data: { message: this.backendMessage },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
       if (this.isSuccess) {
         this.router.navigate(['/list-user']);
       }
     });
   }
 
-  
-  // Validación personalizada para el campo username
-validateUsername(control: AbstractControl): ValidationErrors | null {
-  const value = control.value;
+  validateUsername(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    const onlyLetters = /^[A-Z]+$/.test(value);
+    const isFourCharacters = value.length === 4;
 
-  // Validar que solo contenga letras mayúsculas
-  const onlyLetters = /^[A-Z]+$/.test(value);
+    if (!onlyLetters || !isFourCharacters) {
+      return { invalidUsername: true };
+    }
 
-  // Validar que tenga exactamente 4 caracteres
-  const isFourCharacters = value.length === 4;
-
-  if (!onlyLetters || !isFourCharacters) {
-    return { invalidUsername: true }; // Devuelve un error si no cumple las condiciones
+    return null;
   }
 
-  return null; // No hay errores
-}
-
-convertToUppercase(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  // Convertir a mayúsculas
-  input.value = input.value.toUpperCase();
-  // Actualizar el valor del formControl para reflejar los cambios
-  this.userForm.get('username')?.setValue(input.value, { emitEvent: true });
-}
-
-  redirectToList(): void {
-    this.router.navigate(['/list-user']);
+  convertToUppercase(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.toUpperCase();
+    this.userForm.get('username')?.setValue(input.value, { emitEvent: true });
   }
 
   get username() {

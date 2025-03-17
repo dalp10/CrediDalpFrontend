@@ -29,27 +29,13 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Fecha de Inicio -->
+        <!-- Fecha de Inicio (deshabilitada en el código TypeScript) -->
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Fecha de Inicio</mat-label>
           <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" />
           <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
-          <mat-error *ngIf="creditForm.get('startDate')?.hasError('required')">
-            Este campo es requerido.
-          </mat-error>
         </mat-form-field>
-
-        <!-- Fecha de Fin -->
-        <!-- <mat-form-field appearance="outline" class="form-field">
-          <mat-label>Fecha de Fin</mat-label>
-          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" />
-          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-          <mat-datepicker #endDatePicker></mat-datepicker>
-          <mat-error *ngIf="creditForm.get('endDate')?.hasError('required')">
-            Este campo es requerido.
-          </mat-error>
-        </mat-form-field> -->
       </div>
 
       <!-- Segunda columna: Fechas, cuotas y días de gracia -->
@@ -57,7 +43,8 @@
         <!-- Fecha del Primer Pago -->
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Fecha del Primer Pago</mat-label>
-          <input matInput [matDatepicker]="firstPaymentDatePicker" formControlName="firstPaymentDate" />
+          <input matInput [matDatepicker]="firstPaymentDatePicker" formControlName="firstPaymentDate"
+                 [matDatepickerFilter]="dateFilter" />
           <mat-datepicker-toggle matSuffix [for]="firstPaymentDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #firstPaymentDatePicker></mat-datepicker>
           <mat-error *ngIf="creditForm.get('firstPaymentDate')?.hasError('required')">
@@ -65,17 +52,17 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- ID del Cliente -->
+        <!-- Campo para mostrar el nombre del cliente -->
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>ID del Cliente</mat-label>
-          <input matInput formControlName="clientId" type="number" readonly />
+          <mat-label>Cliente</mat-label>
+          <input matInput [value]="credit.client ? credit.client.firstName + ' ' + credit.client.lastName : ''" readonly />
           <button mat-icon-button (click)="openClientSearchModal()" matSuffix>
             <mat-icon>search</mat-icon>
           </button>
-          <mat-error *ngIf="creditForm.get('clientId')?.hasError('required')">
-            Este campo es requerido.
-          </mat-error>
         </mat-form-field>
+
+        <!-- Campo oculto para el ID del cliente -->
+        <input type="hidden" formControlName="clientId" />
 
         <!-- Número de Cuotas -->
         <mat-form-field appearance="outline" class="form-field">
@@ -87,7 +74,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Período de Gracia -->
+        <!-- Período de Gracia (readonly) -->
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Período de Gracia (días)</mat-label>
           <input matInput formControlName="gracePeriodDays" type="number" readonly />

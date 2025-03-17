@@ -1,5 +1,13 @@
-/* layout.component.css */
 .content {
-    margin-left: 260px; /* Ajusta el margen para que no se solape con el sidebar */
+    margin-left: 260px;
     padding: 20px;
-}
+    transition: margin-left 0.3s ease;
+  }
+  
+  /* Cuando el sidebar está colapsado, ajusta el margen */
+  @media (max-width: 768px) {
+    .content {
+      margin-left: 80px;
+    }
+  }
+  

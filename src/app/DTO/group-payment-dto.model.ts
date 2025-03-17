@@ -1,4 +1,4 @@
-import { GroupPaymentContributionDTO } from "./group-payment-contribution-dto";
+import { GroupPaymentContributionDTO } from "./group-payment-contribution-dto.model";
 import { PaymentMethod } from "../models/PaymentMethod.model";
 
 export interface GroupPaymentDTO {

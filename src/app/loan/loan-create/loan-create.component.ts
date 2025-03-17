@@ -16,6 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
 import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
+import { of } from 'rxjs'; // Importa la función `of` de RxJS
+import { switchMap } from 'rxjs/operators';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { LoanStatus } from '../../enum/loan-status.model';
 
 @Component({
   selector: 'app-loan-create',
@@ -77,13 +81,11 @@ export class LoanCreateComponent implements OnInit {
       width: '600px',
       data: {},
     });
-
-    dialogRef.afterClosed().subscribe((selectedClientId: number) => {
-      if (selectedClientId) {
-        this.clientService.getClientById(selectedClientId).subscribe((client) => {
-          this.loan.client = client;
-          this.loan.clientName = `${client.firstName} ${client.lastName}`;
-        });
+  
+    dialogRef.afterClosed().subscribe((selectedClient: Client | null) => {
+      if (selectedClient) {
+        this.loan.client = selectedClient;
+        this.loan.clientName = `${selectedClient.firstName} ${selectedClient.lastName}`;
       }
     });
   }
@@ -118,8 +120,18 @@ export class LoanCreateComponent implements OnInit {
       alert('Por favor, asegúrate de seleccionar las fechas correctamente.');
       return;
     }
-
-    this.loanService.createLoan(this.loan).subscribe(
+  
+    // Asegúrate de que el objeto que envías al backend incluya el clientId
+    const loanData = {
+      amount: this.loan.amount,
+      interestRate: this.loan.interestRate,
+      issueDate: this.loan.issueDate,
+      dueDate: this.loan.dueDate,
+      clientId: this.loan.client?.id, // Asigna el clientId desde el objeto cliente
+      status : LoanStatus.APROBADO
+    };
+  
+    this.loanService.createLoan(loanData).subscribe(
       (response) => {
         this.dialog.open(ResponseModalComponent, {
           width: '400px',

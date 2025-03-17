@@ -9,11 +9,11 @@
     <div class="payment-info-grid">
       <div class="payment-info-item">
         <strong>Monto Total:</strong>
-        <span class="total-amount">{{ payment.totalAmount | currency }}</span>
+        <span class="total-amount">{{ payment.totalAmount | currency:'PEN':'symbol':'1.2-2' }}</span>
       </div>
       <div class="payment-info-item">
         <strong>Fecha de Pago:</strong>
-        <span class="payment-date">{{ payment.paymentDate | date:'short' }}</span>
+        <span class="payment-date">{{ payment.paymentDate | date:'dd/MM/yyyy' }}</span>
       </div>
       <div class="payment-info-item">
         <strong>Método de Pago:</strong>
@@ -53,13 +53,13 @@
       <!-- MONTO -->
       <ng-container matColumnDef="amountPaid">
         <th mat-header-cell *matHeaderCellDef>Monto</th>
-        <td mat-cell *matCellDef="let c">{{ c.amountPaid | currency }}</td>
+        <td mat-cell *matCellDef="let c">{{ c.amountPaid | currency:'PEN':'symbol':'1.2-2' }}</td>
       </ng-container>
 
       <!-- FECHA -->
       <ng-container matColumnDef="contributionDate">
         <th mat-header-cell *matHeaderCellDef>Fecha</th>
-        <td mat-cell *matCellDef="let c">{{ c.contributionDate | date:'short' }}</td>
+        <td mat-cell *matCellDef="let c">{{ c.contributionDate | date:'dd/MM/yyyy' }}</td>
       </ng-container>
 
       <!-- MÉTODO -->
@@ -92,7 +92,6 @@
     <hr>
 
     <!-- Sección para agregar una nueva contribución -->
-    <h3>Agregar Nueva Contribución</h3>
     <form [formGroup]="newContributionForm" class="new-contribution-form">
       <div class="form-row">
         <mat-form-field appearance="outline" class="client-field">
@@ -101,37 +100,52 @@
           <button mat-icon-button matSuffix color="primary" (click)="openClientSearchModal()" type="button">
             <mat-icon>search</mat-icon>
           </button>
+          <mat-error *ngIf="newContributionForm.get('clientId')?.invalid">
+            Seleccione un cliente.
+          </mat-error>
         </mat-form-field>
-        <input type="hidden" formControlName="clientId">
+        <input type="hidden" formControlName="clientId"> <!-- Campo oculto para clientId -->
       </div>
-
+    
       <div class="form-row">
         <mat-form-field appearance="outline">
           <mat-label>Monto</mat-label>
-          <input matInput type="number" formControlName="amountPaid">
+          <input matInput type="number" formControlName="amountPaid" required>
+          <mat-error *ngIf="newContributionForm.get('amountPaid')?.invalid">
+            El monto es obligatorio y debe ser mayor a 0.
+          </mat-error>
         </mat-form-field>
-
+    
         <mat-form-field appearance="outline">
           <mat-label>Fecha Contribución</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="contributionDate">
+          <input matInput [matDatepicker]="picker" formControlName="contributionDate" required>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="newContributionForm.get('contributionDate')?.invalid">
+            La fecha es obligatoria.
+          </mat-error>
         </mat-form-field>
-
+    
         <mat-form-field appearance="outline">
           <mat-label>Método</mat-label>
-          <mat-select formControlName="paymentMethod">
+          <mat-select formControlName="paymentMethod" required>
             <mat-option *ngFor="let method of paymentMethods" [value]="method">
               {{ method }}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="newContributionForm.get('paymentMethod')?.invalid">
+            Seleccione un método de pago.
+          </mat-error>
         </mat-form-field>
       </div>
-
+    
       <div class="form-actions">
-        <button mat-raised-button color="primary" (click)="addContribution()">
+        <button mat-raised-button color="primary" (click)="addContribution()" [disabled]="newContributionForm.invalid">
           <mat-icon>add</mat-icon> Agregar
         </button>
+        <div *ngIf="newContributionForm.invalid" class="error-message">
+          Por favor, complete todos los campos requeridos.
+        </div>
       </div>
     </form>
 
@@ -151,7 +165,6 @@
     </div>
   </mat-card-content>
 </mat-card>
-
 
 <!-- Modal de confirmación -->
 <ng-template #confirmationModal>

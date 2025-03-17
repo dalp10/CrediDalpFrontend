@@ -37,6 +37,7 @@ import { SinglePaymentComponent } from './single-payment/single-payment.componen
 import { GroupPaymentListComponent } from './group-payment/group-payment-list/group-payment-list.component';
 import { GroupPaymentFormComponent } from './group-payment/group-payment-form/group-payment-form.component';
 import { GroupPaymentDetailComponent } from './group-payment/group-payment-detail/group-payment-detail.component';
+
 export const routes: Routes = [
   // Ruta sin layout
   { path: 'login', component: LoginComponent },
@@ -76,11 +77,9 @@ export const routes: Routes = [
 
       // Pagos Grupales
       { path: 'group-payments', component: GroupPaymentListComponent },
-      { path: 'group-payments/detail/:id', component: GroupPaymentDetailComponent }, // Ruta para ver detalles
-      { path: 'create-group-payment', component: GroupPaymentFormComponent },       // Crear pago grupal
-      { path: 'edit-group-payment/:id', component: GroupPaymentFormComponent },     // Editar pago grupal
       { path: 'group-payments/detail/:id', component: GroupPaymentDetailComponent },
-
+      { path: 'create-group-payment', component: GroupPaymentFormComponent },
+      { path: 'edit-group-payment/:id', component: GroupPaymentFormComponent },
 
       // Redirige a dashboard por defecto
       { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

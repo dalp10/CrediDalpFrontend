@@ -13,6 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importar MatSnackBar
 
 @Component({
   selector: 'app-client-form',
@@ -40,7 +42,8 @@ export class ClientCreateComponent implements OnInit {
     private clientService: ClientService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar // Inyectar el servicio
   ) {
     this.clientForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -64,7 +67,19 @@ export class ClientCreateComponent implements OnInit {
 
   loadClient(id: number): void {
     this.clientService.getClientById(id).subscribe({
-      next: (client: Client) => {
+      next: (response: CustomApiResponse<Client>) => {
+        // Verificar que la respuesta y los datos sean válidos
+        if (!response.data) {
+          console.error('La respuesta del backend no contiene datos válidos.');
+          this.snackBar.open('No se pudo cargar el cliente. Por favor, inténtelo de nuevo.', 'Cerrar', {
+            duration: 3000,
+          });
+          return;
+        }
+  
+        const client = response.data; // Extraer el objeto Client de la respuesta
+  
+        // Actualizar el formulario con los datos del cliente
         this.clientForm.patchValue({
           firstName: client.firstName,
           lastName: client.lastName,
@@ -73,42 +88,58 @@ export class ClientCreateComponent implements OnInit {
           documentNumber: client.documentNumber
         });
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
+        // Manejar el error y mostrar un mensaje en la consola
         console.error('Error al cargar el cliente:', err);
+  
+        // Mostrar un mensaje de error al usuario
+        this.snackBar.open('Error al cargar el cliente. Por favor, inténtelo de nuevo.', 'Cerrar', {
+          duration: 3000,
+        });
       }
     });
   }
 
   onSubmit(): void {
+    // Verificar si el formulario es inválido
     if (this.clientForm.invalid) {
+      this.snackBar.open('Por favor, complete el formulario correctamente.', 'Cerrar', {
+        duration: 3000,
+      });
       return;
     }
-
+  
+    // Abrir el modal de confirmación
     const dialogRef = this.dialog.open(ConfirmationModalComponent, {
-      data: { message: this.isEditMode ? '¿Está seguro de que desea actualizar el cliente?' : '¿Está seguro de que desea crear el cliente?' }
+      data: { 
+        message: this.isEditMode ? '¿Está seguro de que desea actualizar el cliente?' : '¿Está seguro de que desea crear el cliente?' 
+      }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
+  
+    // Manejar la respuesta del modal de confirmación
+    dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
         if (this.isEditMode && this.clientId !== null) {
+          // Modo de edición: Actualizar el cliente
           this.clientService.updateClient(this.clientId, this.clientForm.value).subscribe({
-            next: (response) => {
-              this.backendMessage = response;
+            next: (response: CustomApiResponse<Client>) => {
+              this.backendMessage = response.message || 'Cliente actualizado exitosamente.';
               this.openResponseModal();
             },
             error: (err: HttpErrorResponse) => {
-              this.backendMessage = err.error;
+              this.backendMessage = err.error?.message || 'Error al actualizar el cliente.';
               this.openResponseModal();
             }
           });
         } else {
+          // Modo de creación: Crear un nuevo cliente
           this.clientService.createClient(this.clientForm.value).subscribe({
-            next: (response) => {
-              this.backendMessage = response;
+            next: (response: CustomApiResponse<Client>) => {
+              this.backendMessage = response.message || 'Cliente creado exitosamente.';
               this.openResponseModal();
             },
             error: (err: HttpErrorResponse) => {
-              this.backendMessage = err.error;
+              this.backendMessage = err.error?.message || 'Error al crear el cliente.';
               this.openResponseModal();
             }
           });

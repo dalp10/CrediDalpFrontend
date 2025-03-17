@@ -14,6 +14,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importar MatSnackBar
 
 @Component({
   selector: 'app-client-list',
@@ -43,7 +45,8 @@ export class ClientListComponent implements OnInit {
   constructor(
     private clientService: ClientService, // Servicio de clientes
     private router: Router, // Router para navegación
-    private dialog: MatDialog // Servicio de diálogos (modales)
+    private dialog: MatDialog, // Servicio de diálogos (modales)
+    private snackBar: MatSnackBar // Inyectar el servicio
   ) {}
 
   ngOnInit(): void {
@@ -52,14 +55,43 @@ export class ClientListComponent implements OnInit {
 
   // Cargar la lista de clientes
   loadClients(): void {
-    this.clientService.getAllClients().subscribe((data) => {
-      console.log(data); // Verifica que la respuesta incluya "hasCredits"
-      this.clients = data;
-      this.dataSource.data = data; // Asignar datos a la fuente de la tabla
-      this.dataSource.paginator = this.paginator; // Asignar paginación
+    this.clientService.getAllClients().subscribe({
+      next: (response: CustomApiResponse<Client[]>) => {
+        // Verificar que la respuesta y los datos sean válidos
+        if (!response.data) {
+          console.error('La respuesta del backend no contiene datos válidos.');
+          return;
+        }
+  
+        // Asignar los clientes a la propiedad this.clients
+        this.clients = response.data;
+  
+        // Asignar los datos a la fuente de la tabla
+        this.dataSource.data = response.data;
+  
+        // Asignar el paginador si está disponible
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+        }
+  
+        // Verificar si los clientes tienen créditos (si es necesario)
+        if (response.data.every(client => client.hasCredits !== undefined)) {
+          console.log('Todos los clientes tienen la propiedad "hasCredits".');
+        } else {
+          console.warn('Algunos clientes no tienen la propiedad "hasCredits".');
+        }
+      },
+      error: (err) => {
+        // Manejar el error y mostrar un mensaje en la consola
+        console.error('Error al cargar los clientes:', err);
+  
+        // Opcional: Mostrar un mensaje de error al usuario
+        this.snackBar.open('Error al cargar los clientes. Por favor, inténtelo de nuevo.', 'Cerrar', {
+          duration: 3000,
+        });
+      }
     });
   }
-
   // Aplicar filtro de búsqueda
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -92,22 +124,39 @@ export class ClientListComponent implements OnInit {
 
   // Confirmar la eliminación del cliente
   confirmDeletion(): void {
-    if (this.clientIdToDelete !== null) {
-      this.clientService.deleteClient(this.clientIdToDelete).subscribe({
-        next: (response: string) => {
-          this.backendMessage = response; // Mensaje del backend
-          this.loadClients(); // Recargar la lista de clientes
-          this.dialog.open(ResponseModalComponent, {
-            data: { message: this.backendMessage } // Mostrar mensaje de éxito
-          });
-        },
-        error: (err) => {
-          this.backendMessage = 'Error al eliminar el cliente.'; // Mensaje de error
-          this.dialog.open(ResponseModalComponent, {
-            data: { message: this.backendMessage } // Mostrar mensaje de error
-          });
-        }
-      });
+    // Verificar que clientIdToDelete no sea null
+    if (this.clientIdToDelete === null) {
+      console.error('No se ha proporcionado un ID de cliente para eliminar.');
+      return;
     }
+  
+    // Llamar al servicio para eliminar el cliente
+    this.clientService.deleteClient(this.clientIdToDelete).subscribe({
+      next: (response: CustomApiResponse<string>) => {
+        // Asignar el mensaje del backend
+        this.backendMessage = response.message || 'Cliente eliminado exitosamente.';
+  
+        // Recargar la lista de clientes
+        this.loadClients();
+  
+        // Mostrar mensaje de éxito en el modal
+        this.dialog.open(ResponseModalComponent, {
+          data: { message: this.backendMessage }
+        });
+      },
+      error: (err) => {
+        // Manejar el error y mostrar un mensaje específico si está disponible
+        const errorMessage = err.error?.message || 'Error al eliminar el cliente.';
+        this.backendMessage = errorMessage;
+  
+        // Mostrar mensaje de error en el modal
+        this.dialog.open(ResponseModalComponent, {
+          data: { message: this.backendMessage }
+        });
+  
+        // Registrar el error en la consola
+        console.error('Error al eliminar el cliente:', err);
+      }
+    });
   }
 }

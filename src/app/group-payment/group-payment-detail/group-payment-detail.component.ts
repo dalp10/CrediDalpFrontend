@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { GroupPaymentDTO } from '../../DTO/group-payment-dto';
-import { GroupPaymentContributionDTO } from '../../DTO/group-payment-contribution-dto';
+import { GroupPaymentDTO } from '../../DTO/group-payment-dto.model';
+import { GroupPaymentContributionDTO } from '../../DTO/group-payment-contribution-dto.model';
 import { GroupPaymentService } from '../../services/group-payment.service';
 import { ClientService } from '../../services/client.service'; // Importa el servicio de clientes
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
 import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
 import { MatDialogModule } from '@angular/material/dialog'; // Agrega esta línea
+import { switchMap } from 'rxjs/operators';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { of } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { Client } from '../../models/client.model';
 
 
 @Component({
@@ -59,11 +64,11 @@ export class GroupPaymentDetailComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.newContributionForm = this.fb.group({
-      clientId: [null, Validators.required],
+      clientId: [null, Validators.required], // Campo obligatorio
       clientName: [{ value: '', disabled: true }],
-      amountPaid: [0, Validators.required],
-      contributionDate: [new Date(), Validators.required],
-      paymentMethod: ['', Validators.required],
+      amountPaid: [0, [Validators.required, Validators.min(1)]], // Campo obligatorio y mínimo de 1
+      contributionDate: [new Date(), Validators.required], // Campo obligatorio
+      paymentMethod: ['', Validators.required], // Campo obligatorio
     });
   }
 
@@ -99,8 +104,8 @@ getClientName(clientId: number): string {
       if (result && result.id !== undefined) { // Verifica que result.id no sea undefined
         const client = result;
         this.newContributionForm.patchValue({
-          clientId: client.id,
-          clientName: `${client.firstName} ${client.lastName}`
+          clientId: client.id, // Asigna el clientId al formulario
+          clientName: `${client.firstName} ${client.lastName}` // Asigna el nombre del cliente
         });
   
         // Almacena el nombre del cliente en el objeto clientNames
@@ -114,25 +119,29 @@ getClientName(clientId: number): string {
   // Cargar el pago grupal y sus contribuciones
   loadGroupPayment(id: number): void {
     this.groupPaymentService.getGroupPaymentById(id).subscribe({
-      next: (data) => {
-        this.payment = data;
+      next: (response: CustomApiResponse<GroupPaymentDTO>) => {
+        this.payment = response.data; // Accede a response.data
         if (!this.payment.contributions) {
           this.payment.contributions = []; // Inicializa el array si no existe
         }
   
-        // Cargar los nombres de los clientes para las contribuciones existentes
-        this.payment.contributions.forEach(contribution => {
-          if (contribution.clientId !== undefined && !this.clientNames[contribution.clientId]) { // Verifica que clientId no sea undefined
-            this.clientService.getClientById(contribution.clientId).subscribe({
-              next: (client) => {
-                if (client.id !== undefined) { // Verifica que client.id no sea undefined
-                  this.clientNames[client.id] = `${client.firstName} ${client.lastName}`;
-                }
-              },
-              error: (err) => {
-                console.error('Error al obtener el cliente:', err);
+        // Crear un array de observables para cargar los nombres de los clientes
+        const clientRequests = this.payment.contributions
+          .filter(contribution => contribution.clientId !== undefined && !this.clientNames[contribution.clientId])
+          .map(contribution => this.clientService.getClientById(contribution.clientId));
+  
+        // Realizar todas las solicitudes HTTP en paralelo
+        forkJoin(clientRequests).subscribe({
+          next: (clientResponses: CustomApiResponse<Client>[]) => {
+            clientResponses.forEach(clientResponse => {
+              const client = clientResponse.data; // Accede a clientResponse.data
+              if (client.id !== undefined) {
+                this.clientNames[client.id] = `${client.firstName} ${client.lastName}`;
               }
             });
+          },
+          error: (err) => {
+            console.error('Error al obtener los clientes:', err);
           }
         });
       },
@@ -141,11 +150,26 @@ getClientName(clientId: number): string {
       }
     });
   }
+  
 
   // Agregar una contribución al array local de this.payment.contributions
  
 
   addContribution(): void {
+    console.log('Estado del formulario:', this.newContributionForm.valid);
+    console.log('Valores del formulario:', this.newContributionForm.value);
+    console.log('Pago grupal:', this.payment);
+
+    if (this.newContributionForm.invalid) {
+      console.error('El formulario no es válido:', this.newContributionForm.errors);
+      return;
+    }
+  
+    if (!this.payment) {
+      console.error('El pago grupal no está cargado.');
+      return;
+    }
+
     if (this.newContributionForm.valid && this.payment) {
       const newAmount = this.newContributionForm.value.amountPaid;
       const currentTotal = this.payment.contributions.reduce((sum, c) => sum + (c.amountPaid || 0), 0);
@@ -198,39 +222,54 @@ getClientName(clientId: number): string {
   
   // Guardar (update) el pago grupal con las nuevas contribuciones
   saveChanges(): void {
+    // Usar el operador de aserción no nula (!) para decirle a TypeScript que this.payment no es null
+    if (!this.payment!.serviceType || !this.payment!.totalAmount) {
+        this.responseMessage = 'Los campos "Tipo de Servicio" y "Monto Total" son obligatorios.';
+        this.dialog.open(ResponseModalComponent, { data: { message: this.responseMessage } });
+        return;
+    }
+
     // Abrir el modal de confirmación
     const confirmDialogRef = this.dialog.open(ConfirmationModalComponent, {
-      data: { message: '¿Estás seguro de que deseas guardar los cambios?' }
+        data: { message: '¿Estás seguro de que deseas guardar los cambios?' }
     });
-  
-    confirmDialogRef.afterClosed().subscribe(confirmResult => {
-      if (confirmResult && this.payment) {
-        // Si el usuario confirma, proceder a guardar los cambios
-        this.groupPaymentService.updateGroupPayment(this.payment.id, this.payment).subscribe({
-          next: (updated) => {
-            console.log('Pago grupal actualizado:', updated);
-            this.payment = updated;
-  
-            // Mostrar el modal de respuesta exitosa
-            this.dialog.open(ResponseModalComponent, {
-              data: { message: 'Los cambios se guardaron correctamente.' }
-            });
-          },
-          error: (err) => {
+
+    console.log(this.payment!,this.payment!.id);
+
+    confirmDialogRef.afterClosed().pipe(
+        switchMap((confirmResult: boolean) => {
+            if (confirmResult) {
+                // Si el usuario confirma, proceder a guardar los cambios
+                return this.groupPaymentService.updateGroupPayment(this.payment!.id, this.payment!);
+            } else {
+                // Si el usuario cancela, devolver un observable vacío
+                return of(null);
+            }
+        })
+    ).subscribe({
+        next: (response: CustomApiResponse<GroupPaymentDTO> | null) => {
+            if (response && response.data) {
+                console.log('Pago grupal actualizado:', response.data);
+                this.payment = response.data; // Accede a response.data
+
+                // Mostrar el modal de respuesta exitosa
+                this.dialog.open(ResponseModalComponent, {
+                    data: { message: 'Los cambios se guardaron correctamente.' }
+                });
+            } else {
+                console.log('Guardado cancelado por el usuario');
+            }
+        },
+        error: (err) => {
             console.error('Error al actualizar el pago grupal:', err);
-  
+
             // Mostrar el modal de respuesta de error
             this.dialog.open(ResponseModalComponent, {
-              data: { message: 'Hubo un error al guardar los cambios.' }
+                data: { message: 'Hubo un error al guardar los cambios.' }
             });
-          }
-        });
-      } else {
-        console.log('Guardado cancelado por el usuario');
-      }
+        }
     });
-  }
-
+}
   goBack(): void {
     this.router.navigate(['/group-payments']); // Ajusta la ruta según la que uses para volver
   }
@@ -335,34 +374,38 @@ getClientName(clientId: number): string {
           <h2>Detalles del Pago Grupal</h2>
           <p><strong>ID:</strong> ${this.payment.id}</p>
           <p><strong>Tipo de Servicio:</strong> ${this.payment.serviceType}</p>
-          <p><strong>Monto Total:</strong> <span class="total-amount">${this.payment.totalAmount.toLocaleString()}</span></p>
-          <p><strong>Monto Reembolsado:</strong> ${this.payment.reimbursedAmount.toLocaleString()}</p>
-          <p><strong>Monto Pendiente:</strong> ${this.payment.pendingReimbursement.toLocaleString()}</p>
-          <p><strong>Fecha de Pago:</strong> ${new Date(this.payment.paymentDate).toLocaleDateString()}</p>
+          <p><strong>Monto Total:</strong> <span class="total-amount">S/ ${this.payment.totalAmount?.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></p>
+          <p><strong>Monto Reembolsado:</strong> S/ ${this.payment.reimbursedAmount?.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
+          <p><strong>Monto Pendiente:</strong> S/ ${this.payment.pendingReimbursement?.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
+          <p><strong>Fecha de Pago:</strong> ${this.payment.paymentDate ? new Date(this.payment.paymentDate).toLocaleDateString('es-PE') : 'N/A'}</p>
           <p><strong>Método de Pago:</strong> ${this.payment.paymentMethod}</p>
           <p><strong>Estado:</strong> <span class="payment-status">${this.payment.status}</span></p>
   
           <h3>Contribuciones</h3>
-          <table>
-            <tr>
-              <th>Cliente ID</th>
-              <th>Nombre</th>
-              <th>Monto</th>
-              <th>Fecha</th>
-              <th>Método</th>
-            </tr>
-            ${this.payment.contributions.map(c => `
+          ${this.payment.contributions && this.payment.contributions.length > 0 ? `
+            <table>
               <tr>
-                <td>${c.clientId}</td>
-                <td>${this.getClientName(c.clientId)}</td>
-                <td>${c.amountPaid.toLocaleString()}</td>
-                <td>${new Date(c.contributionDate).toLocaleDateString()}</td>
-                <td>${c.paymentMethod}</td>
+                <th>Cliente ID</th>
+                <th>Nombre</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Método</th>
               </tr>
-            `).join('')}
-          </table>
+              ${this.payment.contributions.map(c => `
+                <tr>
+                  <td>${c.clientId}</td>
+                  <td>${this.getClientName(c.clientId)}</td>
+                  <td>S/ ${c.amountPaid?.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  <td>${c.contributionDate ? new Date(c.contributionDate).toLocaleDateString('es-PE') : 'N/A'}</td>
+                  <td>${c.paymentMethod}</td>
+                </tr>
+              `).join('')}
+            </table>
+          ` : `
+            <p>No hay contribuciones registradas.</p>
+          `}
   
-          <p class="footer">Generado automáticamente el ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}</p>
+          <p class="footer">Generado automáticamente el ${new Date().toLocaleDateString('es-PE')} - ${new Date().toLocaleTimeString('es-PE')}</p>
         </div>
       </body>
       </html>
@@ -376,7 +419,6 @@ getClientName(clientId: number): string {
       printWindow.print();
     }
   }
-  
   
   
 }

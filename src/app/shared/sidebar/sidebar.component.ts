@@ -31,24 +31,42 @@ export class SidebarComponent implements OnInit {
         name: 'Usuarios', icon: 'fas fa-users', isOpen: false, 
         children: [
           { name: 'Listar Usuarios', route: '/list-user', icon: 'fas fa-list' },
-          { name: 'Crear Usuario', route: '/create-user', icon: 'fas fa-plus' },
-          // { name: 'Editar Usuario', route: '/edit-user/:id', icon: 'fas fa-edit' }
+          { name: 'Crear Usuario', route: '/create-user', icon: 'fas fa-plus' }
         ]
       },
       { 
         name: 'Clientes', icon: 'fas fa-user-friends', isOpen: false, 
         children: [
           { name: 'Listar Clientes', route: '/list-client', icon: 'fas fa-list' },
-          { name: 'Crear Cliente', route: '/create-client', icon: 'fas fa-plus' },
-          // { name: 'Editar Cliente', route: '/edit-client/:id', icon: 'fas fa-edit' }
+          { name: 'Crear Cliente', route: '/create-client', icon: 'fas fa-plus' }
         ]
       },
       { 
         name: 'Préstamos', icon: 'fas fa-hand-holding-usd', isOpen: false, 
         children: [
           { name: 'Listar Préstamos', route: '/loans', icon: 'fas fa-list' },
-          { name: 'Crear Préstamo', route: '/create-loan', icon: 'fas fa-plus' },
-          // { name: 'Editar Préstamo', route: '/edit-loan/:id', icon: 'fas fa-edit' }
+          { name: 'Crear Préstamo', route: '/create-loan', icon: 'fas fa-plus' }
+        ]
+      },
+      { 
+        name: 'Créditos', icon: 'fas fa-credit-card', isOpen: false, 
+        children: [
+          { name: 'Listar Créditos', route: '/credits', icon: 'fas fa-list' },
+          { name: 'Crear Crédito', route: '/create-credit', icon: 'fas fa-plus' }
+        ]
+      },
+      { 
+        name: 'Pagos', icon: 'fas fa-money-check-alt', isOpen: false, 
+        children: [
+          { name: 'Listado de Pagos', route: '/payments', icon: 'fas fa-list' },
+          { name: 'Pago Único', route: '/single-payment', icon: 'fas fa-hand-holding-usd' }
+        ]
+      },
+      { 
+        name: 'Pagos Grupales', icon: 'fas fa-users-crown', isOpen: false, 
+        children: [
+          { name: 'Listado de Pagos Grupales', route: '/group-payments', icon: 'fas fa-list' },
+          { name: 'Crear Pago Grupal', route: '/create-group-payment', icon: 'fas fa-plus' }
         ]
       },
       { name: 'Configuración', route: '/configuracion', icon: 'fas fa-cog' }
@@ -61,29 +79,29 @@ export class SidebarComponent implements OnInit {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit() {
-    this.role = this.getUserRole() || 'user'; // Asigna 'user' como valor por defecto si role es null
-}
+  ngOnInit(): void {
+    this.role = this.getUserRole() || 'user';
+  }
 
-getUserRole(): string | null {
+  getUserRole(): string | null {
     const role = localStorage.getItem('role');
     return role ? role.toLowerCase() : null;
-}
+  }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
-  toggleSubmenu(item: MenuItem) {
+  toggleSubmenu(item: MenuItem): void {
     item.isOpen = !item.isOpen;
   }
 
-  toggleCollapse() {
+  toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  toggleTheme() {
+  toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
     document.body.classList.toggle('dark-theme', this.isDarkTheme);
   }

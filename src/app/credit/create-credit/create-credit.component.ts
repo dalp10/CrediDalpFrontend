@@ -13,11 +13,16 @@ import { CreditService } from '../../services/credit.service';
 import { Credit } from '../../models/credit.model';
 import { CommonModule } from '@angular/common';
 import { ClientSearchModalComponent } from '../../shared/client-search-modal/client-search-modal.component';
-import { CreditStatus } from '../../models/credit.model';
+import { CreditStatus } from '../../enum/credit-status.model';
 import { PaymentScheduleModalComponent } from '../../shared/payment-schedule-modal/payment-schedule-modal.component';
 import { formatDate } from '@angular/common';
 import { ClientService } from '../../services/client.service'; // Servicio para obtener clientes
 import { Client } from '../../models/client.model';
+import { lastValueFrom } from 'rxjs';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { Installment } from '../../models/installment.model';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs'; // Asegúrate de importar 'of' desde 'rxjs'
 
 @Component({
   selector: 'app-create-credit',
@@ -41,6 +46,20 @@ import { Client } from '../../models/client.model';
 export class CreateCreditComponent implements OnInit {
   creditForm: FormGroup;
   isSubmitting: boolean = false;
+  minFirstPaymentDate: Date; // Fecha mínima para el primer pago (1 mes después de la fecha de inicio
+
+  // Reemplazar loan por credit
+  credit: Credit = {
+    capitalAmount: 0,
+    startDate: '',
+    gracePeriodDays: 0,
+    clientId: 0,
+    client: null as Client | null,
+    status: CreditStatus.ACTIVO,
+    numberOfInstallments: 0,
+    tea: 0,
+    firstPaymentDate: ''
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -62,9 +81,41 @@ export class CreateCreditComponent implements OnInit {
     // Escuchar cambios en las fechas para calcular los días de gracia
     this.creditForm.get('startDate')?.valueChanges.subscribe(() => this.calculateGracePeriodDays());
     this.creditForm.get('firstPaymentDate')?.valueChanges.subscribe(() => this.calculateGracePeriodDays());
+  
+    this.minFirstPaymentDate = this.calculateFirstPaymentDate(new Date());
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Establecer la fecha de inicio como la fecha actual
+    const today = new Date();
+    this.creditForm.get('startDate')?.setValue(today);
+
+    // Calcular la primera fecha de pago como 1 mes después de la fecha de inicio
+    const firstPaymentDate = this.calculateFirstPaymentDate(today);
+    this.creditForm.get('firstPaymentDate')?.setValue(firstPaymentDate);
+
+    // Escuchar cambios en la fecha de inicio para actualizar la primera fecha de pago
+    this.creditForm.get('startDate')?.valueChanges.subscribe((startDate) => {
+      if (startDate) {
+        const firstPaymentDate = this.calculateFirstPaymentDate(startDate);
+        this.creditForm.get('firstPaymentDate')?.setValue(firstPaymentDate);
+        this.minFirstPaymentDate = firstPaymentDate; // Actualizar la fecha mínima
+      }
+    });
+  }
+
+  // Calcular la primera fecha de pago como 1 mes después de la fecha de inicio
+  calculateFirstPaymentDate(startDate: Date): Date {
+    const firstPaymentDate = new Date(startDate);
+    firstPaymentDate.setMonth(firstPaymentDate.getMonth() + 1);
+    return firstPaymentDate;
+  }
+
+  // Filtro para deshabilitar fechas anteriores a la fecha mínima
+  dateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    return date >= this.minFirstPaymentDate;
+  };
 
   calculateGracePeriodDays(): void {
     const startDate = this.creditForm.get('startDate')?.value;
@@ -100,16 +151,20 @@ export class CreateCreditComponent implements OnInit {
   openClientSearchModal(): void {
     const dialogRef = this.dialog.open(ClientSearchModalComponent, {
       width: '600px',
+      data: {},
     });
-  
-    dialogRef.afterClosed().subscribe((selectedClient: Client) => {
+
+    dialogRef.afterClosed().subscribe((selectedClient: Client | null) => {
       if (selectedClient) {
-        this.creditForm.get('clientId')?.setValue(selectedClient.id); // Asigna solo el ID del cliente
-        // También puedes asignar otros valores del cliente si es necesario, por ejemplo, el nombre
+        // Asignar el objeto cliente directamente
+        this.credit.client = selectedClient;
+        this.credit.clientId = selectedClient.id!;
+
+        // Si necesitas asignar el ID del cliente al formulario, puedes hacerlo así:
+        this.creditForm.get('clientId')?.setValue(selectedClient.id);
       }
     });
   }
-  
 
   // Función formatDate actualizada para aceptar un formato personalizado
   private formatDate(date: Date | string | null | undefined, format: string = 'yyyy-MM-dd'): string {
@@ -147,63 +202,62 @@ export class CreateCreditComponent implements OnInit {
         firstPaymentDate,
       } = this.creditForm.value;
   
-      // Convertir las fechas al formato "yyyy-MM-dd"
+      // Convertir las fechas al formato ISO
       const formattedStartDate = this.formatDate(startDate);
       const formattedFirstPaymentDate = this.formatDate(firstPaymentDate);
   
-
-      const client = await this.clientService.getClientById(clientId).toPromise();
-
-      // Verify if the client data is valid
-      if (!client) {
-        throw new Error('No se pudo obtener el cliente. Verifique el ID proporcionado.');
+      // Verificar si el cliente está definido
+      if (!this.credit.client) {
+        throw new Error('No se ha seleccionado un cliente válido.');
       }
-    // Crear el objeto crédito
+  
+      // Crear el objeto crédito
       const credit: Credit = {
         capitalAmount,
         startDate: formattedStartDate,
         gracePeriodDays,
-        client, // Assign the fetched client data
-        clientId : clientId,
-        status: CreditStatus.ACTIVE,
+        client: this.credit.client, // Asignar el objeto Client completo (no puede ser null)
+        clientId: this.credit.clientId, // Asignar el ID del cliente
+        status: CreditStatus.ACTIVO,
+        numberOfInstallments,
+        tea,
+        firstPaymentDate: formattedFirstPaymentDate,
       };
   
-      // Llamada al servicio para calcular las cuotas
-      const installments = await this.creditService
-        .calculatePaymentSchedule(credit, numberOfInstallments, gracePeriodDays, tea, formattedFirstPaymentDate)
-        .toPromise();
+      console.log(credit);
+      // Calcular las cuotas
+      const installmentsResponse: CustomApiResponse<Installment[]> = await lastValueFrom(
+        this.creditService.calculatePaymentSchedule(credit, numberOfInstallments, gracePeriodDays, tea, formattedFirstPaymentDate)
+      );
   
-      // Verificar si installments está definido y no está vacío
-      if (!installments || installments.length === 0) {
+      if (!installmentsResponse.data || installmentsResponse.data.length === 0) {
         throw new Error('No se pudo calcular el calendario de pagos.');
       }
   
-      // Calcular la fecha de vencimiento
       const dueDate = new Date(firstPaymentDate);
       dueDate.setMonth(dueDate.getMonth() + numberOfInstallments - 1);
   
-      // Datos del crédito para mostrar en el modal
       const creditDetails = {
-        amount: `S/ ${capitalAmount.toFixed(2)}`, // Importe solicitado
-        installmentAmount: `S/ ${installments[0].amount.toFixed(2)}`, // Cuota (tomamos la primera cuota como ejemplo)
-        duration: `${numberOfInstallments} meses`, // Duración total
-        requestDate: this.formatDate(startDate, 'dd/MM/yyyy'), // Fecha de solicitud
-        dueDate: this.formatDate(dueDate, 'dd/MM/yyyy'), // Fecha de vencimiento
-        paymentDay: new Date(firstPaymentDate).getDate(), // Día de pago
-        tea: `${tea}%`, // Tasa Efectiva Anual
+        amount: `S/ ${capitalAmount.toFixed(2)}`,
+        installmentAmount: `S/ ${installmentsResponse.data[0].amount.toFixed(2)}`,
+        duration: `${numberOfInstallments} meses`,
+        requestDate: this.formatDate(startDate, 'dd/MM/yyyy'),
+        dueDate: this.formatDate(dueDate, 'dd/MM/yyyy'),
+        paymentDay: new Date(firstPaymentDate).getDate(),
+        tea: `${tea}%`,
       };
   
-      // Abrir el modal con los datos del crédito y las cuotas
+      // Abrir el modal con los detalles del crédito
       const dialogRef = this.dialog.open(PaymentScheduleModalComponent, {
         width: '800px',
-        data: { installments, creditDetails },
+        data: { installments: installmentsResponse.data, creditDetails },
       });
   
-      const confirmed = await dialogRef.afterClosed().toPromise();
+      const confirmed = await lastValueFrom(dialogRef.afterClosed());
       if (confirmed) {
-        await this.creditService
-          .createCredit(credit, numberOfInstallments, gracePeriodDays, tea, formattedFirstPaymentDate)
-          .toPromise();
+        await lastValueFrom(
+          this.creditService.createCredit(credit, numberOfInstallments, gracePeriodDays, tea, formattedFirstPaymentDate)
+        );
   
         this.snackBar.open('Crédito creado exitosamente', 'Cerrar', {
           duration: 3000,
@@ -211,7 +265,8 @@ export class CreateCreditComponent implements OnInit {
         this.creditForm.reset();
       }
     } catch (err) {
-      this.snackBar.open('Error al procesar la solicitud', 'Cerrar', {
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido';
+      this.snackBar.open(`Error: ${errorMessage}`, 'Cerrar', {
         duration: 3000,
       });
       console.error(err);

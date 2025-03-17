@@ -1,4 +1,5 @@
 import { Client } from './client.model';
+import { CreditStatus } from '../enum/credit-status.model';
 
 export interface Credit {
   id?: number;
@@ -7,18 +8,11 @@ export interface Credit {
   startDate: string;
   gracePeriodDays: number;
   clientId : number,
-  client: Client;
+  client: Client | null;
   status: CreditStatus;
   numberOfInstallments?: number; // Agregado
   tea?: number; // Agregado
-  firstPaymentDate?: Date; // Agregado
+  firstPaymentDate?: string; // Agregado
   installmentNumber? : number
 }
 
-  
-  export enum CreditStatus {
-    ACTIVE = 'ACTIVE',
-    PAID = 'PAID',
-    OVERDUE = 'OVERDUE',
-    CANCELLED = 'CANCELLED'
-  }

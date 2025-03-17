@@ -95,3 +95,10 @@ mat-error {
   font-size: 0.9rem;
   color: #f44336; /* Color rojo para los errores */
 }
+
+button[mat-button][disabled] {
+  background-color: #e0e0e0 !important; /* Fondo gris claro */
+  color: #9e9e9e !important;            /* Texto gris */
+  cursor: not-allowed;
+  opacity: 0.8;
+}

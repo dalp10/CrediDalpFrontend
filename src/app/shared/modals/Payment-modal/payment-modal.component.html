@@ -4,20 +4,19 @@
 </h2>
 <mat-dialog-content>
   <form [formGroup]="paymentForm">
-    <!-- Mostrar el monto total de la cuota -->
+    <!-- Monto pendiente de la cuota -->
     <div class="payment-amount">
-      <mat-icon>attach_money</mat-icon>
       <span>
         Monto Pendiente de la Cuota: 
         {{
           ((data.installment.interestAmount - data.installment.interestPaid) +
            (data.installment.capitalAmount - data.installment.capitalPaid))
            | number:'1.2-2'
-        | currency }}
+           | currency:'PEN':'symbol':'1.2-2' 
+        }}
       </span>
     </div>
     
-
     <!-- Campo para ingresar el monto a pagar -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Monto a Pagar</mat-label>
@@ -29,12 +28,19 @@
         (input)="validateAmount()"
       />
       <mat-icon matSuffix>attach_money</mat-icon>
+      <mat-error *ngIf="paymentForm.get('amountToPay')?.hasError('required')">
+        El monto a pagar es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="paymentForm.get('amountToPay')?.hasError('min')">
+        El monto a pagar debe ser mayor a 0.
+      </mat-error>
       <mat-error *ngIf="paymentForm.get('amountToPay')?.hasError('max')">
-        El monto no puede ser mayor que {{ data.installment.amount | currency }}.
+        El monto no puede ser mayor que {{ data.installment.amount | currency:'PEN':'symbol':'1.2-2' }}.
       </mat-error>
     </mat-form-field>
+    
 
-    <!-- Método de Pago -->
+    <!-- Campo para seleccionar el método de pago -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Método de Pago</mat-label>
       <mat-select formControlName="paymentMethod">
@@ -55,14 +61,20 @@
           Plin
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="paymentForm.get('paymentMethod')?.hasError('required')">
+        Seleccione un método de pago.
+      </mat-error>
     </mat-form-field>
 
-    <!-- Fecha de Pago -->
+    <!-- Campo para seleccionar la fecha de pago -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Pago</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="paymentDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="paymentForm.get('paymentDate')?.hasError('required')">
+        La fecha de pago es obligatoria.
+      </mat-error>
     </mat-form-field>
   </form>
 </mat-dialog-content>

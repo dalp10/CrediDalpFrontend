@@ -1,4 +1,3 @@
-/* user-list.component.css */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -6,67 +5,14 @@
 }
 
 h2 {
-  color: #2c3e50;
+  color: #3f51b5; /* Color primario de Material Design */
   font-weight: bold;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.table {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.table th,
-.table td {
-  padding: 12px;
-  vertical-align: middle;
-}
-
-.table thead {
-  background-color: #007bff;
-  color: white;
-}
-
-.table th {
-  font-weight: 600;
-}
-
-.table tbody tr:hover {
-  background-color: #f8f9fa;
-}
-
-.btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: white;
-}
-
-.btn-warning:hover {
-  background-color: #e0a800;
-  border-color: #e0a800;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-  border-color: #bd2130;
-}
-
-.alert-warning {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
-  border-radius: 8px;
-  padding: 15px;
-  margin-top: 20px;
-}
-
-.alert-warning button {
-  margin-right: 10px;
+mat-icon {
+  margin-right: 8px;
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+// payment-list.component.ts
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,8 +18,10 @@ import { Installment } from '../models/installment.model';
 import { PaymentModalComponent } from '../shared/modals/Payment-modal/payment-modal.component';
 import { ConfirmationModalComponent } from '../shared/modals/confirmation-modal/confirmation-modal.component';
 import { ResponseModalComponent } from '../shared/modals/response-modal/response-modal.component';
-import { formatCurrency } from '@angular/common'; // Importa formatCurrency
-import { ChangeDetectorRef } from '@angular/core'; // Importa ChangeDetectorRef
+import { formatCurrency } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';  // Asegúrate de importar el servicio
+import { CustomApiResponse } from '../models/custom-api-response.model';
+import { InstallmentStatus } from '../enum/installment-status';
 
 @Component({
   selector: 'app-payment-list',
@@ -41,151 +44,124 @@ import { ChangeDetectorRef } from '@angular/core'; // Importa ChangeDetectorRef
 })
 export class PaymentListComponent implements OnInit {
   searchQuery: string = '';
-  searchType: 'client' | 'credit' = 'client'; // Tipo de búsqueda (cliente o crédito)
+  searchType: 'client' | 'credit' = 'client';
   clients: Client[] = [];
   credits: Credit[] = [];
   selectedClient: Client | null = null;
   selectedCredit: Credit | null = null;
   installments: Installment[] = [];
-  backendResponseReceived: boolean = false;  // Variable para controlar si se recibió la respuesta
+  backendResponseReceived: boolean = false;
 
-  // Inyecta ChangeDetectorRef en el constructor
   constructor(
     private paymentService: PaymentService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef // Inyecta ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar  // Inyecta MatSnackBar en el constructor
   ) {}
 
   ngOnInit(): void {}
 
-  // Buscar clientes o créditos
   search(): void {
-    // Limpiar los resultados previos y el estado de la respuesta
     this.clients = [];
     this.credits = [];
     this.selectedClient = null;
     this.selectedCredit = null;
     this.installments = [];
-    this.backendResponseReceived = false;  // Resetear la respuesta del backend
-
-    // Realizar la búsqueda según el tipo (cliente o crédito)
+    this.backendResponseReceived = false;
+  
     if (this.searchType === 'client') {
-      this.paymentService.searchClients(this.searchQuery).subscribe(
-        (data) => {
-          this.backendResponseReceived = true;  // Marcar que la respuesta fue recibida
-          if (data.length > 0) {
-            this.clients = data;
-          } else {
-            this.clients = [];  // Asegurar que el array esté vacío si no hay resultados
-          }
+      this.paymentService.searchClients(this.searchQuery).subscribe({
+        next: (response: CustomApiResponse<Client[]>) => {
+          this.backendResponseReceived = true;
+          this.clients = response.data; // Accede a response.data
         },
-        (error) => {
-          console.error("Error al buscar clientes", error);
-          this.backendResponseReceived = true;  // Marcar que la respuesta fue recibida
-          this.clients = [];  // Asegurarse de que el array esté vacío en caso de error
-        }
-      );
+        error: (error: any) => {
+          console.error('Error al buscar clientes', error);
+          this.backendResponseReceived = true;
+          this.clients = [];
+        },
+      });
     } else {
-      this.paymentService.searchCredits(this.searchQuery).subscribe(
-        (data) => {
-          this.backendResponseReceived = true;  // Marcar que la respuesta fue recibida
-          if (data.length > 0) {
-            this.credits = data;
-          } else {
-            this.credits = [];  // Asegurar que el array esté vacío si no hay resultados
-          }
+      this.paymentService.searchCredits(this.searchQuery).subscribe({
+        next: (response: CustomApiResponse<Credit[]>) => {
+          this.backendResponseReceived = true;
+          this.credits = response.data; // Accede a response.data
         },
-        (error) => {
-          console.error("Error al buscar créditos", error);
-          this.backendResponseReceived = true;  // Marcar que la respuesta fue recibida
-          this.credits = [];  // Asegurarse de que el array esté vacío en caso de error
-        }
-      );
+        error: (error: any) => {
+          console.error('Error al buscar créditos', error);
+          this.backendResponseReceived = true;
+          this.credits = [];
+        },
+      });
     }
   }
-  
-  // Función para manejar el mensaje de no resultados
-showNoResultsMessage(type: 'client' | 'credit'): void {
-  if (type === 'client') {
-    this.clients = []; // Asegura que los clientes estén vacíos
-  } else if (type === 'credit') {
-    this.credits = []; // Asegura que los créditos estén vacíos
-  }
-}
 
-  // Método para seleccionar un cliente
   selectClient(client: Client): void {
     this.selectedClient = client;
     this.selectedCredit = null;
     this.installments = [];
-    this.paymentService.getCreditsByClient(client.id!).subscribe((data) => {
-      console.log(data); // Verifica los datos recibidos
-      this.credits = data;
-      console.log(this.credits); // Verifica los datos recibidos
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.paymentService.getCreditsByClient(client.id!).subscribe({
+      next: (response: CustomApiResponse<Credit[]>) => {
+        this.credits = response.data; // Accede a response.data
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error al cargar los créditos del cliente', error);
+        this.credits = [];
+        this.cdr.detectChanges();
+      },
     });
   }
 
-
-  // Seleccionar un crédito
   selectCredit(credit: Credit): void {
     this.selectedCredit = credit;
-    this.paymentService.getInstallmentsByCredit(credit.id!).subscribe((data) => {
-      // Para mostrar todas las cuotas, sin filtrar por estado:
-      this.installments = data.sort((a, b) =>
-        new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-      );
-      
-      // Si prefieres filtrar pero incluir PAID, podrías hacer:
-      // this.installments = data.filter(installment =>
-      //   installment.status === 'PENDING' ||
-      //   installment.status === 'OVERDUE' ||
-      //   installment.status === 'PARTIALLY_PAID' ||
-      //   installment.status === 'PAID'
-      // ).sort((a, b) =>
-      //   new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-      // );
-      
-      console.log("Cuotas actualizadas:", this.installments);
-      this.cdr.detectChanges();
+    this.paymentService.getInstallmentsByCreditId(credit.id!).subscribe({
+      next: (response: CustomApiResponse<Installment[]>) => {
+        this.installments = response.data.sort(
+          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        );
+        console.log(this.installments);
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error al cargar las cuotas del crédito', error);
+        this.installments = [];
+        this.cdr.detectChanges();
+      },
     });
   }
   
-  
-  // Método para verificar si una cuota es la más antigua
+
   isOldestUnpaidInstallment(installment: Installment): boolean {
-    // Filtrar solo las cuotas que aún no están pagadas
-    const unpaidInstallments = this.installments.filter(inst => inst.status !== 'PAID');
-    
-    // Si no hay cuotas pendientes, se retorna false
+    const unpaidInstallments = this.installments.filter(
+      (inst) => inst.status !== InstallmentStatus.PAGADA
+    );
     if (unpaidInstallments.length === 0) {
       return false;
     }
-    
-    // Asumiendo que 'this.installments' ya está ordenada por fecha de vencimiento,
-    // la cuota pendiente más antigua será la primera en 'unpaidInstallments'
     return installment.id === unpaidInstallments[0].id;
   }
-  
-  
-  
 
-    // Realizar un pago
-    payInstallment(installment: Installment): void {
-      const dialogRef = this.dialog.open(PaymentModalComponent, {
-        data: { installment },
-      });
-    
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          // Solo actualiza la lista de cuotas y muestra el mensaje de respuesta
-          this.selectCredit(this.selectedCredit!);
-          this.dialog.open(ResponseModalComponent, {
-            data: { message: 'Pago realizado con éxito.' },
-          });
-        }
-      });
+
+  payInstallment(installment: Installment): void {
+    console.log('Installment:', installment); // Depuración: Verifica los datos de la cuota
+    if (!installment.creditId || !installment.id) {
+      this.snackBar.open('El crédito o la cuota no tienen un ID válido', 'Cerrar', { duration: 3000 });
+      return;
     }
-    
+  
+    const dialogRef = this.dialog.open(PaymentModalComponent, {
+      data: { installment },
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.selectCredit(this.selectedCredit!);
+        this.dialog.open(ResponseModalComponent, {
+          data: { message: 'Pago realizado con éxito.' },
+        });
+      }
+    });
+  }
   
 }

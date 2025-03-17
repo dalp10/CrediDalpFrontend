@@ -1,51 +1,25 @@
-/* Estilo para los formularios */
-.form-control, .form-select {
-  border-radius: 5px; /* Bordes redondeados */
-  padding: 10px 15px;
-  font-size: 16px;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: #0056b3; /* Color de borde al enfocar */
-  box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.5); /* Sombra de enfoque */
-}
-
-.invalid-feedback {
-  font-size: 0.875rem; /* Reducir tamaño de la fuente para los errores */
-  color: #dc3545; /* Color rojo para los mensajes de error */
-}
-
-/* Botón de envío */
-.btn-primary {
-  font-size: 16px;
-  padding: 12px;
-  border-radius: 5px;
-  background-color: #007bff;
-  border: none;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3; /* Color del botón al pasar el ratón */
-}
-
-.spinner-border-sm {
-  margin-right: 8px; /* Espacio entre el spinner y el texto */
-}
-
-/* Estilo para el contenedor del formulario */
 .container {
   max-width: 500px;
-  margin-top: 50px;
-  padding: 30px;
+  margin: 50px auto;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
-/* Título */
 h2 {
+  text-align: center;
   font-size: 1.75rem;
   font-weight: bold;
-  color: #333;
+  color: #3f51b5;
+  margin-bottom: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+button {
+  margin-top: 20px;
 }

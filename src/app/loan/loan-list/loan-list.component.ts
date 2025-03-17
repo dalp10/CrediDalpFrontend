@@ -18,6 +18,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar'; // Para notificaciones
 import { LoanDetailsModalComponent } from '../../shared/modals/loan-details-modal/loan-details-modal.component';
 import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-loan-list',
@@ -73,29 +75,31 @@ export class LoanListComponent implements OnInit {
   }
 
   loadLoans(): void {
-    this.loanService.getLoans().subscribe(
-      (loans: any[]) => {
-        this.clientService.getAllClients().subscribe(
-          (clients: any[]) => {
-            this.loans = loans.map((loan) => ({
-              ...loan,
-              client: clients.find((client) => client.id === loan.clientId) || {
-                firstName: 'Sin cliente',
-                lastName: '',
-              },
-            }));
-            this.filteredLoans = this.loans;
+    forkJoin({
+      loans: this.loanService.getLoans(),
+      clients: this.clientService.getAllClients()
+    }).subscribe({
+      next: (response) => {
+        const loans = response.loans.data; // Accede a los datos dentro de la respuesta
+        const clients = response.clients.data;
+  
+        // Combina los préstamos con los clientes correspondientes
+        this.loans = loans.map((loan) => ({
+          ...loan,
+          client: clients.find((client) => client.id === loan.clientId) || {
+            firstName: 'Sin cliente',
+            lastName: '',
           },
-          (error) => {
-            this.showError('Error al cargar los clientes');
-          }
-        );
+        }));
+  
+        this.filteredLoans = this.loans; // Actualiza la lista filtrada
       },
-      (error) => {
-        this.showError('Error al cargar los préstamos');
+      error: (err) => {
+        this.showError('Error al cargar los datos');
       }
-    );
+    });
   }
+  
 
   applyFilter(): void {
     this.filteredLoans = this.loans.filter((loan) =>

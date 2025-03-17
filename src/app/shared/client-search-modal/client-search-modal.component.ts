@@ -22,7 +22,7 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatIconModule,
     FormsModule,
-    MatCardModule // <-- Agregado aquí
+    MatCardModule
   ],
   templateUrl: './client-search-modal.component.html',
   styleUrls: ['./client-search-modal.component.css']
@@ -48,16 +48,21 @@ export class ClientSearchModalComponent implements OnInit {
   // Carga la lista de clientes desde el servicio
   loadClients(): void {
     this.clientService.getAllClients().subscribe({
-      next: (clients) => {
-        this.clients = clients;
-        this.filteredClients = clients;
+      next: (response) => {
+        console.log('Respuesta del servicio:', response); // Depuración: Verifica la estructura de la respuesta
+        if (response.statusCode === 200) { // Asegúrate de que response.status sea true o el valor correcto
+          this.clients = response.data; // Asigna los datos a la lista de clientes
+          this.filteredClients = response.data; // Filtra los clientes (inicialmente es igual a la lista completa)
+          console.log('Clientes cargados con éxito:', this.clients); // Depuración: Verifica que los datos se asignaron correctamente
+        } else {
+          console.error('Error al cargar clientes:', response.message);
+        }
       },
       error: (err) => {
         console.error('Error al cargar clientes:', err);
       }
     });
   }
-
   // Filtra la lista de clientes según el término de búsqueda
   filterClients(): void {
     const searchTextLower = this.searchText.toLowerCase();
@@ -71,9 +76,8 @@ export class ClientSearchModalComponent implements OnInit {
 
   // Selecciona un cliente y cierra el modal retornando su ID
   selectClient(client: Client): void {
-    this.dialogRef.close(client); // Retorna el objeto completo del cliente
+    this.dialogRef.close(client); // Retorna solo el ID del cliente
   }
-  
   // Cierra el modal sin seleccionar
   onCancel(): void {
     this.dialogRef.close();

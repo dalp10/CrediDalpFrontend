@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { PaymentMethod } from '../../models/PaymentMethod.model';
-import { GroupPaymentDTO } from '../../DTO/group-payment-dto';
+import { GroupPaymentDTO } from '../../DTO/group-payment-dto.model';
 import { GroupPaymentService } from '../../services/group-payment.service';
 import { Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';

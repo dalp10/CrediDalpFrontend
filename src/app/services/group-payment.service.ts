@@ -1,33 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GroupPaymentDTO } from '../DTO/group-payment-dto';
 import { Observable } from 'rxjs';
+import { GroupPaymentDTO } from '../DTO/group-payment-dto.model';
+import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GroupPaymentService {
   private apiUrl = 'http://localhost:8080/api/group-payments';
 
   constructor(private http: HttpClient) {}
 
-  getAllGroupPayments(): Observable<GroupPaymentDTO[]> {
-    return this.http.get<GroupPaymentDTO[]>(this.apiUrl);
+  // Obtener todos los pagos grupales
+  getAllGroupPayments(): Observable<CustomApiResponse<GroupPaymentDTO[]>> {
+    return this.http.get<CustomApiResponse<GroupPaymentDTO[]>>(this.apiUrl);
   }
 
-  getGroupPaymentById(id: number): Observable<GroupPaymentDTO> {
-    return this.http.get<GroupPaymentDTO>(`${this.apiUrl}/${id}`);
+  // Obtener un pago grupal por ID
+  getGroupPaymentById(id: number): Observable<CustomApiResponse<GroupPaymentDTO>> {
+    return this.http.get<CustomApiResponse<GroupPaymentDTO>>(`${this.apiUrl}/${id}`);
   }
 
-  createGroupPayment(payment: GroupPaymentDTO): Observable<GroupPaymentDTO> {
-    return this.http.post<GroupPaymentDTO>(this.apiUrl, payment);
+  // Crear un nuevo pago grupal
+  createGroupPayment(payment: GroupPaymentDTO): Observable<CustomApiResponse<GroupPaymentDTO>> {
+    return this.http.post<CustomApiResponse<GroupPaymentDTO>>(this.apiUrl, payment);
   }
 
-  updateGroupPayment(id: number, payment: GroupPaymentDTO): Observable<GroupPaymentDTO> {
-    return this.http.put<GroupPaymentDTO>(`${this.apiUrl}/${id}`, payment);
+  // Actualizar un pago grupal
+  updateGroupPayment(id: number, payment: GroupPaymentDTO): Observable<CustomApiResponse<GroupPaymentDTO>> {
+    return this.http.put<CustomApiResponse<GroupPaymentDTO>>(`${this.apiUrl}/${id}`, payment);
   }
 
-  deleteGroupPayment(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  // Eliminar un pago grupal
+  deleteGroupPayment(id: number): Observable<CustomApiResponse<string>> {
+    return this.http.delete<CustomApiResponse<string>>(`${this.apiUrl}/${id}`);
   }
 }

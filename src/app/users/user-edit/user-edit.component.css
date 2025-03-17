@@ -1,49 +1,25 @@
-/* user-edit.component.css */
-.form-control,
-.form-select {
-  border-radius: 5px; /* Bordes redondeados */
-  padding: 10px 15px; /* Espaciado interno */
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
-.mb-3 {
-  margin-bottom: 1.5rem; /* Espaciado entre los campos */
-}
-
-.text-center {
+h2 {
   text-align: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 20px;
 }
 
-.btn {
-  border-radius: 5px; /* Bordes redondeados para el botón */
-  font-weight: 600;
-  padding: 10px 20px; /* Espaciado interno para los botones */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.btn-success {
-  background-color: #28a745; /* Color de fondo verde */
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #218838; /* Hover en el botón */
-}
-
-.is-invalid {
-  border-color: #dc3545; /* Color rojo para los campos no válidos */
-}
-
-.invalid-feedback {
-  display: block;
-  color: #dc3545; /* Mensaje de error en rojo */
-}
-
-/* Estilos para el modal */
-.modal-content {
-  border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Estilos para los iconos */
-.fas {
-  margin-right: 8px; /* Espacio entre el icono y el texto */
+button {
+  margin-top: 20px;
 }

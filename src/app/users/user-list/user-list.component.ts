@@ -2,22 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { CustomApiResponse } from '../../models/custom-api-response.model';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
+import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
-  imports: [RouterModule, FormsModule, CommonModule],
+  imports: [RouterModule, CommonModule, MatTableModule, MatButtonModule, MatIconModule],
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
-  showDeleteConfirmation = false; // Controla la visibilidad del mensaje de confirmación
-  userIdToDelete: number | null = null; // Almacena el ID del usuario a eliminar
+  displayedColumns: string[] = ['username', 'role', 'actions'];
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -25,33 +30,47 @@ export class UserListComponent implements OnInit {
 
   // Carga la lista de usuarios
   loadUsers() {
-    this.userService.getUsers().subscribe((users) => (this.users = users));
+    this.userService.getUsers().subscribe({
+      next: (response: CustomApiResponse<User[]>) => {
+        this.users = response.data;
+      },
+      error: (err) => {
+        console.error('Error al cargar los usuarios:', err);
+        this.showResponseModal('Error loading users. Please try again later.');
+      },
+    });
   }
 
-  // Muestra el mensaje de confirmación para eliminar un usuario
+  // Abre el modal de confirmación para eliminar un usuario
   deleteUser(userId: number | undefined): void {
     if (userId !== undefined) {
-      this.userIdToDelete = userId; // Almacena el ID del usuario a eliminar
-      this.showDeleteConfirmation = true; // Muestra el modal de confirmación
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        data: { message: 'Are you sure you want to delete this user?' },
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.userService.deleteUser(userId).subscribe({
+            next: () => {
+              this.loadUsers(); // Recarga la lista de usuarios después de eliminar
+              this.showResponseModal('User deleted successfully.');
+            },
+            error: (err) => {
+              console.error('Error deleting user:', err);
+              this.showResponseModal('Error deleting user. Please try again later.');
+            },
+          });
+        }
+      });
     } else {
       console.error('User ID is undefined');
     }
   }
-  
 
-  // Confirma la eliminación del usuario
-  confirmDelete() {
-    if (this.userIdToDelete !== null) {
-      this.userService.deleteUser(this.userIdToDelete).subscribe(() => {
-        this.loadUsers(); // Recarga la lista de usuarios después de eliminar
-        this.showDeleteConfirmation = false; // Oculta el mensaje de confirmación
-      });
-    }
-  }
-
-  // Cancela la eliminación del usuario
-  cancelDelete() {
-    this.showDeleteConfirmation = false;
-    this.userIdToDelete = null;
+  // Muestra el modal de respuesta con un mensaje
+  showResponseModal(message: string): void {
+    this.dialog.open(ResponseModalComponent, {
+      data: { message },
+    });
   }
 }

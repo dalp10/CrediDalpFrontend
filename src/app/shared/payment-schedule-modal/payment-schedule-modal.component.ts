@@ -29,6 +29,7 @@ export class PaymentScheduleModalComponent {
   ) {
     this.installments = data.installments;
     this.creditDetails = data.creditDetails;
+    console.log('creditDetails:', this.creditDetails); // Asegúrate de que los datos estén aquí
   }
 
   onConfirm(): void {

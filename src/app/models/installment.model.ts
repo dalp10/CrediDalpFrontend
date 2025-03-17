@@ -1,3 +1,5 @@
+import { InstallmentStatus } from "../enum/installment-status";
+
 export interface Installment {
     id: number;
     installmentNumber: number; // Asegúrate de que esta propiedad exista
@@ -7,11 +9,4 @@ export interface Installment {
     interestAmount: number;
     status: InstallmentStatus;
     creditId: number;
-  }
-  
-  export enum InstallmentStatus {
-    PENDING = 'PENDING',
-    PAID = 'PAID',
-    OVERDUE = 'OVERDUE',
-    PARTIALLY_PAID ='PARTIALLY_PAID'
   }

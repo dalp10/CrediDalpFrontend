@@ -1,56 +1,57 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'; // Importa HttpHeaders y HttpParams
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Client } from '../models/client.model'; // Asegúrate de tener la interfaz Client
-import { Loan } from '../models/loan.model'; // Asegúrate de tener la interfaz Loan
-import { Credit } from '../models/credit.model'; // Asegúrate de tener la interfaz Credit
+import { Client } from '../models/client.model';
+import { Loan } from '../models/loan.model';
+import { Credit } from '../models/credit.model';
+import { CustomApiResponse } from '../models/custom-api-response.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:8080/api/clients'; // Cambia a la URL correcta de tu backend
+  private apiUrl = 'http://localhost:8080/api/clients';
 
   constructor(private http: HttpClient) {}
 
   // Obtener todos los clientes
-  getAllClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(this.apiUrl);
+  getAllClients(): Observable<CustomApiResponse<Client[]>> {
+    return this.http.get<CustomApiResponse<Client[]>>(this.apiUrl);
   }
 
   // Obtener un cliente por ID
-  getClientById(id: number): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/${id}`);
+  getClientById(id: number): Observable<CustomApiResponse<Client>> {
+    return this.http.get<CustomApiResponse<Client>>(`${this.apiUrl}/${id}`);
   }
 
   // Crear un nuevo cliente
-  createClient(client: Client): Observable<string> {
-    return this.http.post<string>(this.apiUrl, client);
+  createClient(client: Client): Observable<CustomApiResponse<Client>> {
+    return this.http.post<CustomApiResponse<Client>>(this.apiUrl, client);
   }
 
   // Actualizar un cliente existente
-  updateClient(id: number, updatedClient: Client): Observable<string> {
-    return this.http.put<string>(`${this.apiUrl}/${id}`, updatedClient);
+  updateClient(id: number, updatedClient: Client): Observable<CustomApiResponse<Client>> {
+    return this.http.put<CustomApiResponse<Client>>(`${this.apiUrl}/${id}`, updatedClient);
   }
 
   // Eliminar un cliente
-  deleteClient(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/${id}`);
+  deleteClient(id: number): Observable<CustomApiResponse<string>> {
+    return this.http.delete<CustomApiResponse<string>>(`${this.apiUrl}/${id}`);
   }
 
   // Verificar si el número de documento ya está registrado
-  isDocumentNumberExists(documentNumber: string): Observable<boolean> {
+  isDocumentNumberExists(documentNumber: string): Observable<CustomApiResponse<boolean>> {
     const params = new HttpParams().set('documentNumber', documentNumber);
-    return this.http.get<boolean>(`${this.apiUrl}/exists`, { params });
+    return this.http.get<CustomApiResponse<boolean>>(`${this.apiUrl}/exists`, { params });
   }
 
   // Obtener los créditos de un cliente por su ID
-  getCreditsByClientId(clientId: number): Observable<Credit[]> {
-    return this.http.get<Credit[]>(`${this.apiUrl}/${clientId}/credits`);
+  getCreditsByClientId(clientId: number): Observable<CustomApiResponse<Credit[]>> {
+    return this.http.get<CustomApiResponse<Credit[]>>(`${this.apiUrl}/${clientId}/credits`);
   }
 
   // Obtener los préstamos de un cliente por su ID
-  getLoansByClientId(clientId: number): Observable<Loan[]> {
-    return this.http.get<Loan[]>(`${this.apiUrl}/${clientId}/loans`);
+  getLoansByClientId(clientId: number): Observable<CustomApiResponse<Loan[]>> {
+    return this.http.get<CustomApiResponse<Loan[]>>(`${this.apiUrl}/${clientId}/loans`);
   }
 }

@@ -1,35 +1,36 @@
 <div class="sidebar" [ngClass]="{ 'collapsed': isCollapsed }">
-  <div class="sidebar-header">
+    <div class="sidebar-header">
       <h2>Dashboard</h2>
       <p>Panel de control</p>
-  </div>
-
-  <button class="toggle-btn" (click)="toggleCollapse()">
+    </div>
+  
+    <button class="toggle-btn" (click)="toggleCollapse()">
       <i class="fas fa-bars"></i>
-  </button>
-
-  <ul class="menu">
-    <li class="menu-item" *ngFor="let item of menuItems[role || 'user']">
+    </button>
+  
+    <ul class="menu">
+      <li class="menu-item" *ngFor="let item of menuItems[role || 'user']">
         <a [routerLink]="item.route" (click)="item.children && toggleSubmenu(item)">
-            <i class="icon" [ngClass]="item.icon"></i>
-            <span *ngIf="!isCollapsed">{{ item.name }}</span>
-            <i *ngIf="item.children" class="arrow fas fa-angle-right" [ngClass]="{ 'rotate': item.isOpen }"></i>
+          <i class="icon" [ngClass]="item.icon"></i>
+          <span *ngIf="!isCollapsed">{{ item.name }}</span>
+          <i *ngIf="item.children" class="arrow fas fa-angle-right" [ngClass]="{ 'rotate': item.isOpen }"></i>
         </a>
         <ul class="submenu" [ngClass]="{ 'open': item.isOpen }">
-            <li *ngFor="let child of item.children">
-                <a [routerLink]="child.route">
-                    <i class="icon" [ngClass]="child.icon"></i>
-                    <span *ngIf="!isCollapsed">{{ child.name }}</span>
-                </a>
-            </li>
+          <li *ngFor="let child of item.children">
+            <a [routerLink]="child.route">
+              <i class="icon" [ngClass]="child.icon"></i>
+              <span *ngIf="!isCollapsed">{{ child.name }}</span>
+            </a>
+          </li>
         </ul>
-    </li>
-</ul>
-
-  <div class="sidebar-footer">
+      </li>
+    </ul>
+  
+    <div class="sidebar-footer">
       <button class="logout-btn" (click)="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span *ngIf="!isCollapsed">Cerrar sesión</span>
+        <i class="fas fa-sign-out-alt"></i>
+        <span *ngIf="!isCollapsed">Cerrar sesión</span>
       </button>
+    </div>
   </div>
-</div>
+  

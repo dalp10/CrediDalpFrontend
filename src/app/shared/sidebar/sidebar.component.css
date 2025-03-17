@@ -1,70 +1,79 @@
-/* Estilos generales del sidebar */
+/* Sidebar principal, moderno y elegante */
 .sidebar {
   width: 260px;
   height: 100vh;
-  background: #2c3e50;
-  color: white;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: #ecf0f1;
   padding: 20px;
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-  position: fixed; /* Fija el sidebar */
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  transition: width 0.3s ease;
+  position: fixed;
   z-index: 1000;
 }
-/* Encabezado del Sidebar */
+
+/* Estado colapsado: solo íconos */
+.sidebar.collapsed {
+  width: 80px;
+}
+
 .sidebar-header {
   text-align: center;
   margin-bottom: 30px;
 }
 
 .sidebar-header h2 {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   color: #1abc9c;
-  transition: color 0.3s ease;
+  margin: 0;
+  transition: opacity 0.3s ease;
 }
 
 .sidebar-header p {
   font-size: 14px;
   color: #bdc3c7;
+  margin: 0;
+  transition: opacity 0.3s ease;
 }
 
 /* Botón de toggle */
 .toggle-btn {
   background: none;
   border: none;
-  color: white;
-  font-size: 20px;
+  color: #ecf0f1;
+  font-size: 22px;
   cursor: pointer;
   margin-bottom: 20px;
+  align-self: flex-end;
   transition: transform 0.3s ease;
 }
 
 .toggle-btn:hover {
-  transform: rotate(180deg);
+  transform: rotate(90deg);
 }
 
-/* Menú del Sidebar */
+/* Menú principal */
 .menu {
-  list-style: none; /* Elimina las bolitas de la lista principal */
+  list-style: none;
   padding: 0;
   flex-grow: 1;
 }
 
 .menu-item {
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
 .menu-item a {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
-  color: white;
+  padding: 12px 20px;
+  color: #ecf0f1;
   text-decoration: none;
   border-radius: 8px;
-  transition: background 0.3s, transform 0.2s ease-in-out;
+  transition: background 0.3s, transform 0.2s ease;
 }
 
 .menu-item a:hover {
@@ -80,14 +89,13 @@
 
 /* Submenú */
 .submenu {
+  list-style: none;
   padding-left: 20px;
   margin-top: 10px;
-  /* border-left: 3px solid rgba(255, 255, 255, 0.5); */ /* Elimina la raya vertical */
-  overflow: hidden;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
-  list-style: none; /* Elimina las bolitas del submenú */
+  overflow: hidden;
+  transition: max-height 0.5s ease, opacity 0.3s ease;
 }
 
 .submenu.open {
@@ -96,24 +104,24 @@
 }
 
 .submenu a {
-  padding: 12px 25px;
-  font-size: 14px;
-  color: #ccc;
   display: block;
-  transition: color 0.3s, background 0.3s, padding-left 0.3s;
+  padding: 10px 25px;
+  font-size: 14px;
+  color: #bdc3c7;
+  border-radius: 5px;
+  transition: background 0.3s, padding-left 0.3s;
 }
 
 .submenu a:hover {
-  color: white;
   background: rgba(255, 255, 255, 0.1);
   padding-left: 30px;
-  border-radius: 5px;
+  color: #ecf0f1;
 }
 
-/* Flecha de submenú */
+/* Flecha para submenú */
 .arrow {
   font-size: 14px;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease;
   color: #1abc9c;
   margin-left: auto;
 }
@@ -131,7 +139,7 @@
 .logout-btn {
   width: 100%;
   background: #e74c3c;
-  color: white;
+  color: #ecf0f1;
   padding: 12px;
   border: none;
   border-radius: 5px;
@@ -149,18 +157,16 @@
   transform: scale(1.05);
 }
 
-/* Estilo para el colapso del sidebar */
-.sidebar.collapsed {
-  width: 80px;
-}
-
+/* Cuando el sidebar está colapsado, se oculta texto */
 .sidebar.collapsed .sidebar-header h2,
 .sidebar.collapsed .sidebar-header p,
 .sidebar.collapsed .menu-item span,
 .sidebar.collapsed .logout-btn span {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
+/* Ajustar alineación en estado colapsado */
 .sidebar.collapsed .menu-item a {
   justify-content: center;
 }
@@ -169,24 +175,21 @@
   margin-right: 0;
 }
 
-/* Responsive Design */
+/* Diseño responsive para pantallas pequeñas */
 @media (max-width: 768px) {
   .sidebar {
-      width: 80px;
+    width: 80px;
   }
-
   .sidebar-header h2,
   .sidebar-header p,
   .menu-item span,
   .logout-btn span {
-      display: none;
+    display: none;
   }
-
   .menu-item a {
-      justify-content: center;
+    justify-content: center;
   }
-
   .menu-item .icon {
-      margin-right: 0;
+    margin-right: 0;
   }
 }
