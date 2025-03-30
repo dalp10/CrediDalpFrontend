@@ -7,12 +7,14 @@ import { Loan } from '../models/loan.model';
 import { Installment } from '../models/installment.model';
 import { PaymentLoanDTO, PaymentCreditDTO } from '../DTO/payment-dto';
 import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = `${environment.apiUrl}`;
+
 
   constructor(private http: HttpClient) {}
 

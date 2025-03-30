@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GroupPaymentDTO } from '../DTO/group-payment-dto.model';
 import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupPaymentService {
-  private apiUrl = 'http://localhost:8080/api/group-payments';
+  private apiUrl = `${environment.apiUrl}/group-payments`;
 
   constructor(private http: HttpClient) {}
 

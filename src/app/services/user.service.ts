@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { Role } from '../models/role.model';
 import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/users';
-  private rolesUrl = 'http://localhost:8080/api/roles';
+  private apiUrl = `${environment.apiUrl}/users`;
+  private rolesUrl = `${environment.apiUrl}/roles`;
 
   constructor(private http: HttpClient) {}
 

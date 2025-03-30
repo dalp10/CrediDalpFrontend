@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { Credit } from '../models/credit.model';
 import { Installment } from '../models/installment.model';
 import { CustomApiResponse } from '../models/custom-api-response.model'; // Importa el nuevo modelo de respuesta
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CreditService {
-  private apiUrl = 'http://localhost:8080/api/credits';
+  private apiUrl = `${environment.apiUrl}/credits`;
 
   constructor(private http: HttpClient) {}
 

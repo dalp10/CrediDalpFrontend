@@ -5,12 +5,13 @@ import { Client } from '../models/client.model';
 import { Loan } from '../models/loan.model';
 import { Credit } from '../models/credit.model';
 import { CustomApiResponse } from '../models/custom-api-response.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:8080/api/clients';
+  private apiUrl = `${environment.apiUrl}/clients`;
 
   constructor(private http: HttpClient) {}
 
