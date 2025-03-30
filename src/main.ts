@@ -1,7 +1,6 @@
 /// <reference types="@angular/localize" />
 
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
 import { importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -9,7 +8,12 @@ import { provideNativeDateAdapter } from '@angular/material/core'; // Importa pr
 import { registerLocaleData } from '@angular/common';
 import localeEsPe from '@angular/common/locales/es-PE'; // Importa el locale de Perú
 import { AppComponent } from './app/app.component';
+
+
+import { provideRouter, withPreloading } from '@angular/router';
+import { PreloadAllModules } from '@angular/router';
 import { routes } from './app/app.routes';
+
 
 // 📌 Función para obtener el token del LocalStorage
 export function tokenGetter() {
@@ -31,7 +35,7 @@ bootstrapApplication(AppComponent, {
         },
       })
     ),
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     provideNativeDateAdapter(), // Añade provideNativeDateAdapter aquí
     { provide: LOCALE_ID, useValue: 'es-PE' }, // Configura el locale a es-PE
   ],
