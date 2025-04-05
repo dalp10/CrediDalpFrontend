@@ -27,7 +27,7 @@ export class AuthService {
 
   // Guardar el token en LocalStorage
   saveToken(token: string): void {
-    localStorage.setItem('jwt', token);
+    localStorage.setItem('jwt_token', token);
   }
 
   // Guardar el rol en LocalStorage
@@ -37,7 +37,7 @@ export class AuthService {
 
   // Obtener el token almacenado
   getToken(): string | null {
-    return localStorage.getItem('jwt');
+    return localStorage.getItem('jwt_token');
   }
 
   // Obtener el rol almacenado
@@ -54,7 +54,7 @@ export class AuthService {
 
   // Logout (Eliminar el token y rol)
   logout(): void {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('jwt_token');
     localStorage.removeItem('role');
     this.router.navigate(['/login']);
   }
