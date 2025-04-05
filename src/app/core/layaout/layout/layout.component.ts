@@ -10,4 +10,6 @@ import { RouterModule } from '@angular/router';
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css'],
 })
-export class LayoutComponent {}
+export class LayoutComponent {
+  isSidebarCollapsed = false;
+}

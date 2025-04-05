@@ -98,11 +98,16 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleCollapse(): void {
-    this.isCollapsed = !this.isCollapsed;
+    if (window.innerWidth <= 768) {
+      document.querySelector('.sidebar')?.classList.toggle('open');
+    } else {
+      this.isCollapsed = !this.isCollapsed;
+    }
   }
-
+  
   toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
     document.body.classList.toggle('dark-theme', this.isDarkTheme);
   }
+  
 }

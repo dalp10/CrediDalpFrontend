@@ -1,4 +1,4 @@
 <app-sidebar></app-sidebar>
-<div class="content">
+<div class="content" [class.collapsed]="isSidebarCollapsed">
   <router-outlet></router-outlet>
 </div>

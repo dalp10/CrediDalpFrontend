@@ -1,13 +1,17 @@
 .content {
-    margin-left: 260px;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
+  margin-left: 260px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .content {
+  margin-left: 80px;
+}
+
+/* En móviles, el sidebar se sobrepone en lugar de empujar el contenido */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0 !important;
+    padding: 10px;
   }
-  
-  /* Cuando el sidebar está colapsado, ajusta el margen */
-  @media (max-width: 768px) {
-    .content {
-      margin-left: 80px;
-    }
-  }
-  
+}
