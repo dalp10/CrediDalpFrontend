@@ -10,7 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['./login.component.css'],
   imports: [FormsModule, CommonModule, FontAwesomeModule]
 })
 export class LoginComponent {

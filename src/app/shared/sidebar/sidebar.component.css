@@ -1,195 +1,94 @@
-/* Sidebar principal, moderno y elegante */
-.sidebar {
-  width: 260px;
-  height: 100vh;
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  color: #ecf0f1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Poppins', sans-serif;
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
-  transition: width 0.3s ease;
+.sidebar-container {
   position: fixed;
-  z-index: 1000;
-}
-
-/* Estado colapsado: solo íconos */
-.sidebar.collapsed {
-  width: 80px;
-}
-
-.sidebar-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.sidebar-header h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1abc9c;
-  margin: 0;
-  transition: opacity 0.3s ease;
-}
-
-.sidebar-header p {
-  font-size: 14px;
-  color: #bdc3c7;
-  margin: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Botón de toggle */
-.toggle-btn {
-  background: none;
-  border: none;
-  color: #ecf0f1;
-  font-size: 22px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  align-self: flex-end;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  z-index: 1200;
+  transform: translateX(-100%);
   transition: transform 0.3s ease;
 }
 
-.toggle-btn:hover {
-  transform: rotate(90deg);
+.sidebar-container.open {
+  transform: translateX(0);
 }
 
-/* Menú principal */
-.menu {
-  list-style: none;
-  padding: 0;
-  flex-grow: 1;
+.sidebar {
+  background-color: #1c2b36;
+  color: #fff;
+  width: 260px;
+  height: 100%;
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
-.menu-item {
-  margin-bottom: 15px;
+.sidebar-header h3 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
 }
 
-.menu-item a {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
-  color: #ecf0f1;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: background 0.3s, transform 0.2s ease;
-}
-
-.menu-item a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
-}
-
-.menu-item .icon {
-  margin-right: 15px;
-  font-size: 20px;
-  color: #1abc9c;
-}
-
-/* Submenú */
-.submenu {
-  list-style: none;
-  padding-left: 20px;
-  margin-top: 10px;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease, opacity 0.3s ease;
-}
-
-.submenu.open {
-  max-height: 300px;
-  opacity: 1;
-}
-
-.submenu a {
+.sidebar-nav a {
   display: block;
-  padding: 10px 25px;
-  font-size: 14px;
-  color: #bdc3c7;
-  border-radius: 5px;
-  transition: background 0.3s, padding-left 0.3s;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 1rem;
 }
 
-.submenu a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  padding-left: 30px;
-  color: #ecf0f1;
+.sidebar-nav a:hover {
+  text-decoration: underline;
 }
 
-/* Flecha para submenú */
-.arrow {
-  font-size: 14px;
-  transition: transform 0.3s ease;
-  color: #1abc9c;
-  margin-left: auto;
+.sidebar-backdrop {
+  display: none;
 }
 
-.arrow.rotate {
-  transform: rotate(90deg);
-}
-
-/* Pie del Sidebar */
-.sidebar-footer {
-  margin-top: auto;
-  text-align: center;
-}
-
-.logout-btn {
-  width: 100%;
-  background: #e74c3c;
-  color: #ecf0f1;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.logout-btn:hover {
-  background: #c0392b;
-  transform: scale(1.05);
-}
-
-/* Cuando el sidebar está colapsado, se oculta texto */
-.sidebar.collapsed .sidebar-header h2,
-.sidebar.collapsed .sidebar-header p,
-.sidebar.collapsed .menu-item span,
-.sidebar.collapsed .logout-btn span {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Ajustar alineación en estado colapsado */
-.sidebar.collapsed .menu-item a {
-  justify-content: center;
-}
-
-.sidebar.collapsed .menu-item .icon {
-  margin-right: 0;
-}
-
-/* Diseño responsive para pantallas pequeñas */
 @media (max-width: 768px) {
-  .sidebar {
-    position: absolute;
-    height: 100%;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    transition: transform 0.3s ease;
-    transform: translateX(-100%);
+  .sidebar-container {
+    width: 100%;
   }
 
-  .sidebar.open {
-    transform: translateX(0);
+  .sidebar {
+    width: 260px;
+    position: absolute;
+    z-index: 1300;
   }
+
+  .sidebar-backdrop {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    top: 0;
+    left: 0;
+  }
+
+  .icon {
+    margin-right: 8px;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+  }
+
+  lucide-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  
+  
 }
 
+@media (min-width: 769px) {
+  .sidebar-container {
+    transform: translateX(0) !important;
+  }
 
+  .sidebar-backdrop {
+    display: none !important;
+  }
+}

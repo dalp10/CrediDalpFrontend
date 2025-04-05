@@ -1,17 +1,24 @@
-.content {
-  margin-left: 260px;
-  padding: 20px;
+.layout-content {
   transition: margin-left 0.3s ease;
+  padding: 1rem;
+  margin-left: 260px;
 }
 
-.sidebar.collapsed ~ .content {
-  margin-left: 80px;
-}
-
-/* En móviles, el sidebar se sobrepone en lugar de empujar el contenido */
 @media (max-width: 768px) {
-  .content {
-    margin-left: 0 !important;
-    padding: 10px;
+  .layout-content {
+    margin-left: 0;
   }
+}
+
+.menu-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1201;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
 }

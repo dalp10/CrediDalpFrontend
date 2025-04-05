@@ -1,4 +1,9 @@
-<app-sidebar></app-sidebar>
-<div class="content" [class.collapsed]="isSidebarCollapsed">
+<app-sidebar [open]="isSidebarOpen" (closed)="closeSidebar()"></app-sidebar>
+
+<!-- Botón hamburguesa solo visible en móvil -->
+<button class="menu-button" *ngIf="isMobile" (click)="toggleSidebar()">☰</button>
+
+<!-- Contenido principal -->
+<div class="layout-content">
   <router-outlet></router-outlet>
 </div>
