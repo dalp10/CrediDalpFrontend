@@ -45,7 +45,7 @@
           <mat-list-item *ngFor="let loan of loans" (click)="selectCredit(loan)">
             <div style="display: flex; justify-content: space-between; width: 100%;">
               <span><strong>Código:</strong> {{ loan.loanCode }}</span>
-              <span><strong>Monto:</strong> {{ loan.amount | currency }}</span>
+              <span><strong>Monto:</strong> {{ loan.amount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
               <span>
                 <strong>Estado:</strong>
                 <span class="status" [ngClass]="getStatusClass(loan.status)">
@@ -57,73 +57,61 @@
         </mat-list>
       </div>
 
-<!-- Detalles del Crédito Seleccionado -->
-<div *ngIf="selectedLoan" class="credit-details">
-  <h3>
-    <mat-icon>credit_card</mat-icon>
-    Detalles del Crédito: {{ selectedLoan.loanCode }}
-  </h3>
+      <!-- Detalles del Crédito Seleccionado -->
+      <div *ngIf="selectedLoan" class="credit-details">
+        <h3>
+          <mat-icon>credit_card</mat-icon>
+          Detalles del Crédito: {{ selectedLoan.loanCode }}
+        </h3>
 
-  <!-- Contenedor en cuadrícula para los datos -->
-  <div class="loan-details-grid">
-    <!-- Fila 1: Capital e Interés Original -->
-    <div class="detail-item">
-      <span class="label">Capital Original:</span>
-      <span class="value">{{ selectedLoan.amount | currency }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="label">Interés Original:</span>
-      <span class="value">{{ selectedLoan.interestAmount | currency }}</span>
-    </div>
+        <div class="loan-details-grid">
+          <div class="detail-item">
+            <span class="label">Capital Original:</span>
+            <span class="value">{{ selectedLoan.amount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Interés Original:</span>
+            <span class="value">{{ selectedLoan.interestAmount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Capital Pagado:</span>
+            <span class="value">{{ selectedLoan.capitalPaid | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Interés Pagado:</span>
+            <span class="value">{{ selectedLoan.interestPaid | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Capital Pendiente:</span>
+            <span class="value">{{ selectedLoan.remainingCapital | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Interés Pendiente:</span>
+            <span class="value">{{ selectedLoan.remainingInterest | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Deuda Pendiente:</span>
+            <span class="value">{{ selectedLoan.totalAmount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Estado:</span>
+            <span class="status" [ngClass]="getStatusClass(selectedLoan.status)">
+              {{ selectedLoan.status }}
+            </span>
+          </div>
+          <div class="detail-item" style="grid-column: span 2;">
+            <span class="label">Fecha de Vencimiento:</span>
+            <span class="value">{{ selectedLoan.dueDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
 
-    <!-- Fila 2: Capital Pagado e Interés Pagado -->
-    <div class="detail-item">
-      <span class="label">Capital Pagado:</span>
-      <span class="value">{{ selectedLoan.capitalPaid | currency }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="label">Interés Pagado:</span>
-      <span class="value">{{ selectedLoan.interestPaid | currency }}</span>
-    </div>
-
-    <!-- Fila 3: Capital e Interés Pendiente -->
-    <div class="detail-item">
-      <span class="label">Capital Pendiente:</span>
-      <span class="value">{{ selectedLoan.remainingCapital | currency }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="label">Interés Pendiente:</span>
-      <span class="value">{{ selectedLoan.remainingInterest | currency }}</span>
-    </div>
-
-    <!-- Fila 4: Deuda Pendiente y Estado -->
-    <div class="detail-item">
-      <span class="label">Deuda Pendiente:</span>
-      <span class="value">{{ selectedLoan.totalAmount | currency }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="label">Estado:</span>
-      <span class="status" [ngClass]="getStatusClass(selectedLoan.status)">
-        {{ selectedLoan.status }}
-      </span>
-    </div>
-
-    <!-- Fila 5: Fecha de Vencimiento -->
-    <div class="detail-item" style="grid-column: span 2;">
-      <span class="label">Fecha de Vencimiento:</span>
-      <span class="value">{{ selectedLoan.dueDate | date }}</span>
-    </div>
-  </div>
-
-  <!-- Botón de Pagar alineado a la derecha -->
-  <div class="actions-container">
-    <button mat-raised-button color="primary" (click)="openPaymentModal()">
-      <mat-icon>payment</mat-icon>
-      Pagar
-    </button>
-  </div>
-</div>
-
+        <div class="actions-container">
+          <button mat-raised-button color="primary" (click)="openPaymentModal()">
+            <mat-icon>payment</mat-icon>
+            Pagar
+          </button>
+        </div>
+      </div>
 
       <!-- Mensaje si no se encuentran clientes -->
       <div *ngIf="clients.length === 0 && searchQuery && backendResponseReceived">

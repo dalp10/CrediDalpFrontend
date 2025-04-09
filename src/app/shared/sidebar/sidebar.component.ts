@@ -43,5 +43,12 @@ export class SidebarComponent {
     usuarios: 'Users',
     clientes: 'User',
     prestamos: 'HandCoins',
+    creditos: 'CreditCard',
+    pagos: 'Wallet',
+    grupales: 'Users',
+    lista: 'List',
   };
+  
+  
+  
 }

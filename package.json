@@ -32,6 +32,7 @@
     "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
     "jspdf": "^3.0.0",
+    "lucide": "^0.487.0",
     "lucide-angular": "^0.487.0",
     "ngx-pagination": "^6.0.3",
     "rxjs": "~7.8.0",

@@ -44,9 +44,13 @@ export class SinglePaymentModalComponent {
   ) {
     this.paymentForm = this.fb.group({
       amountToPay: [
-        0,
-        [Validators.required, Validators.max(this.data.totalAmount)],
-      ],
+        null,
+        [
+          Validators.required,
+          Validators.min(0.01),
+          Validators.max(this.data.totalAmount),
+        ],
+      ],      
       paymentMethod: ['', Validators.required],
       paymentDate: [new Date(), Validators.required],
       interestPaid: [0],

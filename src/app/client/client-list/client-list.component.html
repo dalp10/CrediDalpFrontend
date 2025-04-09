@@ -53,6 +53,9 @@
             <button mat-icon-button color="warn" (click)="openDeleteModal(client.id!)" [disabled]="client.hasCredits">
               <mat-icon>delete</mat-icon>
             </button>
+            <button mat-icon-button color="accent" (click)="viewCredits(client.id)">
+              <mat-icon>account_balance</mat-icon>
+            </button>            
           </td>
         </ng-container>
 

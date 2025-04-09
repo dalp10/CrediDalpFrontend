@@ -1,9 +1,83 @@
-.credit-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  
-  .credit-card {
-    width: 300px;
-  }
+.credit-list-container {
+  padding: 2rem;
+  background-color: #f5f7fa;
+}
+
+.credit-list-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.no-credits-msg {
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.credit-list-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+
+.credit-card {
+  width: 340px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+}
+
+.credit-card:hover {
+  transform: translateY(-5px);
+}
+
+.credit-code {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.credit-status .badge {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.badge.activo {
+  background-color: #e0f7e9;
+  color: #2e7d32;
+}
+
+.badge.pagado {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.badge.vencido {
+  background-color: #fdecea;
+  color: #c62828;
+}
+
+.badge.cancelado {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.credit-info {
+  margin-top: 1rem;
+}
+
+.info-line {
+  font-size: 15px;
+  margin-bottom: 6px;
+}

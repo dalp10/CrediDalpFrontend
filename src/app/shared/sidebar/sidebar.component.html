@@ -7,18 +7,61 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a [routerLink]="['/dashboard']">
-        <lucide-icon [name]="icons.dashboard" class="icon" /> Dashboard
-      </a>
-      <a [routerLink]="['/list-user']">
-        <lucide-icon [name]="icons.usuarios" class="icon" /> Usuarios
-      </a>
-      <a [routerLink]="['/list-client']">
-        <lucide-icon [name]="icons.clientes" class="icon" /> Clientes
-      </a>
-      <a [routerLink]="['/loans']">
-        <lucide-icon [name]="icons.prestamos" class="icon" /> Préstamos
-      </a>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/dashboard']">
+          <lucide-icon name="home" class="icon" /> Dashboard
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/list-user']">
+          <lucide-icon name="users" class="icon" /> Usuarios
+        </a>
+        <a [routerLink]="['/list-client']">
+          <lucide-icon name="user" class="icon" /> Clientes
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/credits']">
+          <lucide-icon name="credit-card" class="icon" /> Créditos
+        </a>
+        <a [routerLink]="['/create-credit']" class="sub-option">
+          <lucide-icon name="plus-circle" class="icon" /> Nuevo Crédito
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/loans']">
+          <lucide-icon name="hand-coins" class="icon" /> Préstamos
+        </a>
+        <a [routerLink]="['/create-loan']" class="sub-option">
+          <lucide-icon name="plus-circle" class="icon" /> Nuevo Préstamo
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/payment-list']">
+          <lucide-icon name="wallet" class="icon" /> Pagos Créditos
+        </a>
+        <a [routerLink]="['/single-payment']" class="sub-option">
+          <lucide-icon name="dollar-sign" class="icon" /> Pago de Préstamo
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <a [routerLink]="['/group-payments']">
+          <lucide-icon name="users" class="icon" /> Pagos Grupales
+        </a>
+        <a [routerLink]="['/create-group-payment']" class="sub-option">
+          <lucide-icon name="plus-circle" class="icon" /> Nuevo Pago Grupal
+        </a>
+        <a [routerLink]="['/group-payments']" class="sub-option">
+          <lucide-icon name="list" class="icon" /> Lista de Pagos Grupales
+        </a>
+      </div>
+
     </nav>
   </aside>
 </div>

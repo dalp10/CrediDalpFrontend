@@ -1,0 +1,35 @@
+<div class="credit-list-container">
+    <h2 class="credit-list-title">Créditos del Cliente</h2>
+  
+    <div *ngIf="credits.length === 0" class="no-credits-msg">
+      <mat-icon>info</mat-icon>
+      No se encontraron créditos registrados para este cliente.
+    </div>
+  
+    <div class="credit-list-grid">
+      <mat-card class="credit-card" *ngFor="let credit of credits">
+        <mat-card-header>
+          <mat-card-title class="credit-code">{{ credit.code }}</mat-card-title>
+          <mat-card-subtitle class="credit-status">
+            <span class="badge" [ngClass]="credit.status.toLowerCase()">
+              {{ credit.status }}
+            </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+  
+        <mat-card-content class="credit-info">
+          <div class="info-line"><strong>Monto:</strong> S/ {{ credit.capitalAmount }}</div>
+          <div class="info-line"><strong>TEA:</strong> {{ credit.tea }}%</div>
+          <div class="info-line"><strong>Inicio:</strong> {{ credit.startDate }}</div>
+          <div class="info-line"><strong>Periodo de Gracia:</strong> {{ credit.gracePeriodDays }} días</div>
+          <div class="info-line"><strong>Cuotas:</strong> {{ credit.installmentNumber }}</div>
+        </mat-card-content>
+  
+        <mat-card-actions align="end">
+          <button mat-button color="primary" (click)="verDetalles(credit.id!)">Ver Detalles</button>
+          <button mat-button color="accent" (click)="verCuotas(credit.id!)">Cuotas</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  

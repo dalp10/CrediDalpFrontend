@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './auth/auth.guard'; // 👈 Importa tu guard
+import { AuthGuard } from './auth/auth.guard';
+import { PaymentListComponent } from './payments/payment-list.component';
 
 export const routes: Routes = [
   {
@@ -9,10 +10,11 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [AuthGuard], // 🔐 Protege todas las rutas hijas
+    canActivate: [AuthGuard],
     loadComponent: () =>
       import('./core/layaout/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
+      // Dashboard y entidades principales
       {
         path: 'dashboard',
         loadComponent: () =>
@@ -48,6 +50,25 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./client/client-create/client-create.component').then((m) => m.ClientCreateComponent),
       },
+
+      // Créditos
+      {
+        path: 'credits',
+        loadComponent: () =>
+          import('./credit/credit-list/credit-list.component').then((m) => m.CreditListComponent),
+      },
+      {
+        path: 'credits/client/:clientId',
+        loadComponent: () =>
+          import('./credit/credit-list/credit-list.component').then((m) => m.CreditListComponent),
+      },
+      {
+        path: 'create-credit',
+        loadComponent: () =>
+          import('./credit/create-credit/create-credit.component').then((m) => m.CreateCreditComponent),
+      },
+
+      // Préstamos
       {
         path: 'loans',
         loadComponent: () =>
@@ -63,11 +84,42 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./loan/loan-edit/loan-edit.component').then((m) => m.LoanEditComponent),
       },
+
+      // Pagos individuales
       {
-        path: 'credits',
+        path: 'payment-list',
         loadComponent: () =>
-          import('./credit/credit-list/credit-list.component').then((m) => m.CreditListComponent),
+          import('./payments/payment-list.component').then((m) => m.PaymentListComponent),
       },
+      {
+        path: 'single-payment',
+        loadComponent: () =>
+          import('./single-payment/single-payment.component').then((m) => m.SinglePaymentComponent),
+      },
+
+      // Pagos grupales
+      {
+        path: 'group-payments',
+        loadComponent: () =>
+          import('./group-payment/group-payment-list/group-payment-list.component').then((m) => m.GroupPaymentListComponent),
+      },
+      {
+        path: 'create-group-payment',
+        loadComponent: () =>
+          import('./group-payment/group-payment-form/group-payment-form.component').then((m) => m.GroupPaymentFormComponent),
+      },
+      {
+        path: 'edit-group-payment/:id',
+        loadComponent: () =>
+          import('./group-payment/group-payment-form/group-payment-form.component').then((m) => m.GroupPaymentFormComponent),
+      },
+      {
+        path: 'group-payments/detail/:id',
+        loadComponent: () =>
+          import('./group-payment/group-payment-detail/group-payment-detail.component').then((m) => m.GroupPaymentDetailComponent),
+      },
+
+      // Redirección por defecto
       {
         path: '',
         redirectTo: '/dashboard',

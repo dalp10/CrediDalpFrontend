@@ -1,40 +1,60 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importa CommonModule
-import { MatCardModule } from '@angular/material/card'; // Importa MatCardModule
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { CreditService } from '../../services/credit.service';
 import { Credit } from '../../models/credit.model';
 import { CustomApiResponse } from '../../models/custom-api-response.model';
-
-
 
 @Component({
   selector: 'app-credit-list',
   standalone: true,
   templateUrl: './credit-list.component.html',
   styleUrls: ['./credit-list.component.css'],
-  imports: [CommonModule, MatCardModule], // Agrega MatCardModule aquí
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule
+  ],
 })
 export class CreditListComponent implements OnInit {
   credits: Credit[] = [];
 
-  constructor(private creditService: CreditService) {}
+  constructor(
+    private creditService: CreditService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadCredits();
+    this.route.paramMap.subscribe((params) => {
+      const clientId = Number(params.get('clientId'));
+      if (clientId) {
+        this.loadCredits(clientId);
+      }
+    });
   }
 
-  loadCredits(): void {
-    const clientId = 17; // Cambia esto según el cliente que desees cargar
-    console.log('Cargando créditos para el cliente:', clientId); // Verifica que se esté llamando este método
-  
+  loadCredits(clientId: number): void {
     this.creditService.getCreditsByClient(clientId).subscribe({
       next: (response: CustomApiResponse<Credit[]>) => {
-        console.log('Créditos cargados:', response.data); // Verifica los datos recibidos
-        this.credits = response.data; // Accede a response.data
+        this.credits = response.data;
       },
       error: (err) => {
-        console.error('Error al cargar créditos:', err); // Verifica si hay errores
+        console.error('Error al cargar créditos:', err);
       },
     });
+  }
+
+  // 🚧 Opcionales: conecta estos con tus rutas reales si quieres
+  verDetalles(creditId: number): void {
+    this.router.navigate(['/credits', creditId, 'details']);
+  }
+
+  verCuotas(creditId: number): void {
+    this.router.navigate(['/credits', creditId, 'installments']);
   }
 }

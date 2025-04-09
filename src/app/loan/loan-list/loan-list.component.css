@@ -33,3 +33,10 @@ h2 {
 .mat-paginator {
   margin-top: 20px;
 }
+
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+}

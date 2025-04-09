@@ -158,5 +158,10 @@ export class ClientListComponent implements OnInit {
         console.error('Error al eliminar el cliente:', err);
       }
     });
+
   }
+  viewCredits(clientId: number): void {
+    this.router.navigate(['/credits/client', clientId]);
+  }
+  
 }

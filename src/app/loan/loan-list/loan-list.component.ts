@@ -20,6 +20,7 @@ import { LoanDetailsModalComponent } from '../../shared/modals/loan-details-moda
 import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
 import { CustomApiResponse } from '../../models/custom-api-response.model';
 import { forkJoin } from 'rxjs';
+import { Router } from '@angular/router'; // 👈 asegúrate de tenerlo
 
 @Component({
   selector: 'app-loan-list',
@@ -66,8 +67,9 @@ export class LoanListComponent implements OnInit {
   constructor(
     private loanService: LoanService,
     private clientService: ClientService,
-    private dialog: MatDialog, // Inyecta MatDialog
-    private snackBar: MatSnackBar // Inyecta MatSnackBar
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private router: Router // 👈 agrégalo al constructor
   ) {}
 
   ngOnInit(): void {
@@ -181,5 +183,9 @@ export class LoanListComponent implements OnInit {
 
     // Guardar el archivo
     XLSX.writeFile(wb, 'prestamos.xlsx');
+  }
+
+  crearPrestamo() {
+    this.router.navigate(['/create-loan']); // ✅ ruta corregida
   }
 }

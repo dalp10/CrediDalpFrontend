@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../shared/modals/confirmation-modal/confirmation-modal.component';
 import { ResponseModalComponent } from '../../shared/modals/response-modal/response-modal.component';
+import { Router } from '@angular/router'; // asegúrate de tenerlo
 
 @Component({
   selector: 'app-user-list',
@@ -22,7 +23,7 @@ export class UserListComponent implements OnInit {
   users: User[] = [];
   displayedColumns: string[] = ['username', 'role', 'actions'];
 
-  constructor(private userService: UserService, public dialog: MatDialog) {}
+  constructor(private userService: UserService, public dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -73,4 +74,9 @@ export class UserListComponent implements OnInit {
       data: { message },
     });
   }
+
+  crearUsuario() {
+    this.router.navigate(['/create-user']);
+  }
+  
 }

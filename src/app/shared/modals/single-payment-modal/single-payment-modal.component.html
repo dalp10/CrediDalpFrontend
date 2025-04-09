@@ -2,86 +2,85 @@
   <mat-icon>payment</mat-icon>
   Realizar Pago
 </h2>
+
 <mat-dialog-content>
   <form [formGroup]="paymentForm">
     <!-- Deuda Total -->
     <div class="payment-amount">
       <mat-icon>attach_money</mat-icon>
-      <span>Deuda Total: {{ data.totalAmount | currency }}</span>
+      <span>Deuda Total: {{ data.totalAmount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
     </div>
 
-    <!-- Saldo Pendiente (Desglose) -->
+    <!-- Saldo Pendiente -->
     <div class="balance-grid">
       <div class="balance-item">
         <mat-icon>account_balance</mat-icon>
         <div>
           <span class="balance-label">Capital Pendiente</span>
-          <span class="balance-value">{{ data.remainingCapital | currency }}</span>
+          <span class="balance-value">{{ data.remainingCapital | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
         </div>
       </div>
       <div class="balance-item">
         <mat-icon>percent</mat-icon>
         <div>
           <span class="balance-label">Interés Pendiente</span>
-          <span class="balance-value">{{ data.remainingInterest | currency }}</span>
+          <span class="balance-value">{{ data.remainingInterest | currency:'PEN':'symbol':'1.2-2':'es-PE' }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Campo para ingresar el monto a pagar -->
+    <!-- Monto a pagar -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Monto a Pagar</mat-label>
       <input matInput type="number" formControlName="amountToPay" placeholder="Ingrese el monto" (input)="validateAmount()">
       <mat-error *ngIf="paymentForm.get('amountToPay')?.hasError('max')">
-        El monto no puede ser mayor que {{ data.totalAmount | currency }}.
+        El monto no puede ser mayor que {{ data.totalAmount | currency:'PEN':'symbol':'1.2-2':'es-PE' }}.
+      </mat-error>
+      <mat-error *ngIf="paymentForm.get('amountToPay')?.hasError('min')">
+        El monto debe ser mayor que S/ 0.00.
       </mat-error>
     </mat-form-field>
 
-    <!-- Desglose del pago ingresado -->
+    <!-- Desglose -->
     <div class="payment-breakdown-grid">
       <div class="breakdown-item">
         <mat-icon>percent</mat-icon>
         <span class="breakdown-label">Interés a Pagar</span>
-        <span class="breakdown-value">{{ paymentForm.get('interestPaid')?.value | currency }}</span>
+        <span class="breakdown-value">
+          {{ paymentForm.get('interestPaid')?.value | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+        </span>
       </div>
       <div class="breakdown-item">
         <mat-icon>account_balance</mat-icon>
         <span class="breakdown-label">Capital a Pagar</span>
         <span class="breakdown-value">
-          {{ (paymentForm.get('amountToPay')?.value - paymentForm.get('interestPaid')?.value) | currency }}
+          {{
+            (paymentForm.get('amountToPay')?.value - paymentForm.get('interestPaid')?.value)
+              | currency:'PEN':'symbol':'1.2-2':'es-PE'
+          }}
         </span>
       </div>
       <div class="breakdown-item total">
         <mat-icon>attach_money</mat-icon>
         <span class="breakdown-label">Total a Pagar</span>
-        <span class="breakdown-value">{{ paymentForm.get('amountToPay')?.value | currency }}</span>
+        <span class="breakdown-value">
+          {{ paymentForm.get('amountToPay')?.value | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+        </span>
       </div>
     </div>
 
-    <!-- Método de Pago -->
+    <!-- Método de pago -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Método de Pago</mat-label>
       <mat-select formControlName="paymentMethod">
-        <mat-option value="EFECTIVO">
-          <mat-icon>money</mat-icon>
-          Efectivo
-        </mat-option>
-        <mat-option value="TRANSFERENCIA">
-          <mat-icon>account_balance</mat-icon>
-          Transferencia
-        </mat-option>
-        <mat-option value="YAPE">
-          <mat-icon>smartphone</mat-icon>
-          Yape
-        </mat-option>
-        <mat-option value="PLIN">
-          <mat-icon>smartphone</mat-icon>
-          Plin
-        </mat-option>
+        <mat-option value="EFECTIVO"><mat-icon>money</mat-icon> Efectivo</mat-option>
+        <mat-option value="TRANSFERENCIA"><mat-icon>account_balance</mat-icon> Transferencia</mat-option>
+        <mat-option value="YAPE"><mat-icon>smartphone</mat-icon> Yape</mat-option>
+        <mat-option value="PLIN"><mat-icon>smartphone</mat-icon> Plin</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <!-- Fecha de Pago -->
+    <!-- Fecha -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Pago</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="paymentDate">
@@ -89,10 +88,10 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <!-- Campo oculto para el interés calculado -->
-    <input type="hidden" formControlName="interestPaid">
+    <input type="hidden" formControlName="interestPaid" />
   </form>
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">
     <mat-icon>cancel</mat-icon>
